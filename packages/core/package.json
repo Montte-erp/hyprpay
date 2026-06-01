@@ -1,0 +1,35 @@
+{
+  "name": "@hyprpay/core",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/hyprpay.js",
+  "types": "./dist/hyprpay.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/hyprpay.d.ts",
+      "import": "./dist/hyprpay.js"
+    },
+    "./adapter": {
+      "types": "./dist/adapter.d.ts",
+      "import": "./dist/adapter.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas.d.ts",
+      "import": "./dist/schemas.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "better-result": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}

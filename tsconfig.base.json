@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "composite": true,
+    "skipLibCheck": true,
+    "noEmitOnError": true,
+    "verbatimModuleSyntax": true,
+    "forceConsistentCasingInFileNames": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "@hyprpay/core": ["packages/core/src/hyprpay.ts"],
+      "@hyprpay/core/adapter": ["packages/core/src/adapter.ts"],
+      "@hyprpay/core/errors": ["packages/core/src/errors.ts"],
+      "@hyprpay/core/schemas": ["packages/core/src/schemas.ts"],
+      "@hyprpay/asaas": ["packages/asaas/src/asaas.ts"]
+    }
+  }
+}
