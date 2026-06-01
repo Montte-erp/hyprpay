@@ -11,6 +11,20 @@ bun run build
 bun test
 ```
 
+## Skills
+
+Skills vivem em `.agents/skills/<name>/SKILL.md`.
+
+Antes de trabalhar em qualquer área do HyprPay, abra a skill correspondente. A skill é a fonte de verdade para regras atuais, referências, workflow e validação.
+
+| Área | Open this skill |
+|------|-----------------|
+| Implementação em `packages/*` | [implementation](.agents/skills/implementation/SKILL.md) |
+| Review comments, PR findings, bugs, diffs, CI findings | [code-review](.agents/skills/code-review/SKILL.md) |
+| Security audit, webhook security, secrets, provider payloads | [security-audit](.agents/skills/security-audit/SKILL.md) |
+
+Quando a tarefa cruzar áreas, abra cada skill relevante. Exemplo: corrigir webhook inseguro usa [security-audit](.agents/skills/security-audit/SKILL.md), [code-review](.agents/skills/code-review/SKILL.md) e [implementation](.agents/skills/implementation/SKILL.md).
+
 ## Regras
 
 - Código público em inglês; mensagens de erro user-facing em pt-BR.
