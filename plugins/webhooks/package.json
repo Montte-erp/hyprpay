@@ -1,0 +1,28 @@
+{
+  "name": "@hyprpay/webhooks",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/webhooks-plugin.js",
+  "types": "./dist/webhooks-plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/webhooks-plugin.d.ts",
+      "import": "./dist/webhooks-plugin.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hyprpay/charges": "workspace:^",
+    "@hyprpay/checkouts": "workspace:^",
+    "@hyprpay/core": "workspace:^",
+    "@hyprpay/orders": "workspace:^",
+    "@hyprpay/subscriptions": "workspace:^",
+    "better-result": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}

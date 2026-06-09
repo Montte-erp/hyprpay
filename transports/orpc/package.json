@@ -1,0 +1,35 @@
+{
+  "name": "@hyprpay/orpc",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@orpc/server": "latest",
+    "@orpc/openapi": "latest",
+    "@hyprpay/core": "workspace:^",
+    "@hyprpay/catalog": "workspace:^",
+    "@hyprpay/customers": "workspace:^",
+    "@hyprpay/checkouts": "workspace:^",
+    "@hyprpay/subscriptions": "workspace:^",
+    "@hyprpay/orders": "workspace:^",
+    "@hyprpay/refunds": "workspace:^",
+    "@hyprpay/discounts": "workspace:^",
+    "@hyprpay/seats": "workspace:^",
+    "@hyprpay/meters": "workspace:^",
+    "@hyprpay/entitlements": "workspace:^",
+    "better-result": "latest",
+    "zod": "latest"
+  }
+}

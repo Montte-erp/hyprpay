@@ -5,11 +5,17 @@
   "type": "module",
   "packageManager": "bun@1.3.14",
   "workspaces": [
-    "packages/*"
+    "core/*",
+    "shared/*",
+    "plugins/*",
+    "orms/*",
+    "transports/*",
+    "gateways/*"
   ],
   "scripts": {
-    "build": "bun run --cwd packages/core build && bun run --cwd packages/asaas build",
-    "typecheck": "tsc -b",
+    "build": "bun run build:packages",
+    "build:packages": "bun run --cwd core/core build && bun run --cwd shared/money build && bun run --cwd shared/http build && bun run --cwd plugins/catalog build && bun run --cwd plugins/customers build && bun run --cwd plugins/checkouts build && bun run --cwd plugins/charges build && bun run --cwd plugins/subscriptions build && bun run --cwd plugins/discounts build && bun run --cwd plugins/orders build && bun run --cwd plugins/refunds build && bun run --cwd plugins/meters build && bun run --cwd plugins/seats build && bun run --cwd plugins/entitlements build && bun run --cwd plugins/webhooks build && bun run --cwd orms/drizzle build && bun run --cwd transports/orpc build && bun run --cwd gateways/abacatepay build",
+    "typecheck": "bun run build && bun run --cwd core/core typecheck && bun run --cwd shared/money typecheck && bun run --cwd shared/http typecheck && bun run --cwd plugins/catalog typecheck && bun run --cwd plugins/customers typecheck && bun run --cwd plugins/checkouts typecheck && bun run --cwd plugins/charges typecheck && bun run --cwd plugins/subscriptions typecheck && bun run --cwd plugins/discounts typecheck && bun run --cwd plugins/orders typecheck && bun run --cwd plugins/refunds typecheck && bun run --cwd plugins/meters typecheck && bun run --cwd plugins/seats typecheck && bun run --cwd plugins/entitlements typecheck && bun run --cwd plugins/webhooks typecheck && bun run --cwd orms/drizzle typecheck && bun run --cwd transports/orpc typecheck && bun run --cwd gateways/abacatepay typecheck",
     "test": "bun test"
   },
   "devDependencies": {

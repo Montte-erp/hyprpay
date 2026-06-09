@@ -16,13 +16,7 @@
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
     "ignoreDeprecations": "6.0",
-    "baseUrl": ".",
-    "paths": {
-      "@hyprpay/core": ["packages/core/src/hyprpay.ts"],
-      "@hyprpay/core/adapter": ["packages/core/src/adapter.ts"],
-      "@hyprpay/core/errors": ["packages/core/src/errors.ts"],
-      "@hyprpay/core/schemas": ["packages/core/src/schemas.ts"],
-      "@hyprpay/asaas": ["packages/asaas/src/asaas.ts"]
-    }
+    "types": ["bun"],
+    "baseUrl": "."
   }
 }

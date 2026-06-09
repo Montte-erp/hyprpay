@@ -1,0 +1,25 @@
+{
+  "name": "@hyprpay/meters",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/meters-plugin.js",
+  "types": "./dist/meters-plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/meters-plugin.d.ts",
+      "import": "./dist/meters-plugin.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hyprpay/core": "workspace:^",
+    "@hyprpay/money": "workspace:^",
+    "better-result": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}

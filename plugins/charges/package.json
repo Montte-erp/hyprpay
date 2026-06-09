@@ -1,0 +1,24 @@
+{
+  "name": "@hyprpay/charges",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/charges-plugin.js",
+  "types": "./dist/charges-plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/charges-plugin.d.ts",
+      "import": "./dist/charges-plugin.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hyprpay/core": "workspace:^",
+    "better-result": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}

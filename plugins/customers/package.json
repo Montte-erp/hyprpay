@@ -1,0 +1,24 @@
+{
+  "name": "@hyprpay/customers",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/customers-plugin.js",
+  "types": "./dist/customers-plugin.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/customers-plugin.d.ts",
+      "import": "./dist/customers-plugin.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hyprpay/core": "workspace:^",
+    "better-result": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "name": "@hyprpay/drizzle",
+  "version": "0.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@hyprpay/catalog": "workspace:^",
+    "@hyprpay/charges": "workspace:^",
+    "@hyprpay/checkouts": "workspace:^",
+    "@hyprpay/customers": "workspace:^",
+    "@hyprpay/discounts": "workspace:^",
+    "@hyprpay/entitlements": "workspace:^",
+    "@hyprpay/meters": "workspace:^",
+    "@hyprpay/orders": "workspace:^",
+    "@hyprpay/refunds": "workspace:^",
+    "@hyprpay/seats": "workspace:^",
+    "@hyprpay/subscriptions": "workspace:^",
+    "@hyprpay/webhooks": "workspace:^",
+    "better-result": "latest",
+    "drizzle-orm": "latest",
+    "drizzle-zod": "latest",
+    "evlog": "latest",
+    "zod": "latest"
+  }
+}
