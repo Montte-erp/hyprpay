@@ -1,4 +1,5 @@
 ---
+import { BookOpenCheck, Gauge, PlugZap } from "@lucide/astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -41,14 +42,17 @@ export const hyprpay = createHyprPay({
   <Section eyebrow="Direção" title="PayKit claro, Better Auth composável, AstroWind no site." description="HyprPay usa as melhores ideias de DX sem copiar código proprietário: factories pequenas, plugins explícitos, catálogo declarativo e adapters finos para gateways brasileiros.">
     <div class="grid gap-5 md:grid-cols-3">
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <BookOpenCheck class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">Catálogo em código</h3>
         <p class="mt-3 leading-7 text-slate-300">Produtos, planos, features, benefícios e preços ficam tipados na aplicação e sincronizados em versões imutáveis no Postgres.</p>
       </article>
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <Gauge class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">Capabilities locais</h3>
         <p class="mt-3 leading-7 text-slate-300">Entitlements, meters, license keys, downloads, seats e portal sessions não viram cola de gateway.</p>
       </article>
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <PlugZap class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">Adapters finos</h3>
         <p class="mt-3 leading-7 text-slate-300">Gateways normalizam requests, responses e webhooks. Payload bruto para na boundary do adapter.</p>
       </article>

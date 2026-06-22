@@ -1,4 +1,5 @@
 ---
+import { Rocket } from "@lucide/astro";
 import Logo from "./logo.astro";
 import { navItems } from "../navigation";
 
@@ -24,7 +25,10 @@ const { active } = Astro.props;
         </a>
       ))}
     </nav>
-    <a class="btn-secondary hidden sm:inline-flex" href="/quickstart">Integrar</a>
+    <a class="btn-secondary hidden sm:inline-flex" href="/quickstart">
+      <Rocket class="mr-2 h-4 w-4" aria-hidden="true" />
+      Integrar
+    </a>
   </div>
   <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:hidden" aria-label="Navegação mobile">
     {navItems.map(item => (

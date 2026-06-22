@@ -1,4 +1,5 @@
 ---
+import { Blocks, Cable, ShieldCheck } from "@lucide/astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -21,14 +22,17 @@ const layers = [
   <Section eyebrow="Comparação" title="O que fica de cada referência.">
     <div class="grid gap-5 md:grid-cols-3">
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <Blocks class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">Better Auth</h3>
         <p class="mt-3 leading-7 text-slate-300">Factory-first, plugins server/client separados, mesmo <code>id</code> nos dois lados e endpoints namespaced.</p>
       </article>
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <Cable class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">PayKit</h3>
         <p class="mt-3 leading-7 text-slate-300">Catálogo em código, sync no deploy, status check em CI e entitlement como primitiva de produto.</p>
       </article>
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <ShieldCheck class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
         <h3 class="text-xl font-bold text-white">AstroWind</h3>
         <p class="mt-3 leading-7 text-slate-300">Docs estáticas, componentes de Hero/Section, Tailwind v4, SEO básico e visual SaaS sem JavaScript desnecessário.</p>
       </article>

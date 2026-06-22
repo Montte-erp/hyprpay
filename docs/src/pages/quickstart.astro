@@ -1,4 +1,5 @@
 ---
+import { DatabaseZap, PackagePlus } from "@lucide/astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -19,7 +20,7 @@ const pro = plan({
 export const hyprpay = createHyprPay({
   catalog: [product({ id: "app", name: "App", plans: [free, pro] })],
   store: postgresStore({ db }),
-  provider: createAsaasProvider({ apiKey: process.env.ASAAS_API_KEY ?? "", server: "sandbox" }),
+  provider: createAsaasProvider({ apiKey: env.ASAAS_API_KEY, server: "sandbox" }),
 });`;
 
 const checkoutCode = `const customer = await Effect.runPromise(
@@ -37,33 +38,35 @@ const checkout = await Effect.runPromise(
   }),
 );`;
 ---
-<BaseLayout title="Quickstart" description="Install HyprPay, configure Postgres, define a catalog, and start checkout." active="/quickstart">
+<BaseLayout title="Quickstart" description="Instale HyprPay, configure Postgres, defina o catálogo e crie seu primeiro checkout." active="/quickstart">
   <Hero
     eyebrow="Quickstart"
-    title="From empty app to checkout in four steps."
-    description="Keep gateway config at the edge and let HyprPay own billing records, catalog versions, and entitlements."
+    title="Do app vazio ao checkout em quatro passos."
+    description="Mantenha configuração de gateway na borda e deixe HyprPay controlar registros, versões de catálogo e entitlements."
   />
 
   <Section>
     <div class="grid gap-5 lg:grid-cols-2">
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Step 1</span>
-        <h2 class="mt-3 text-2xl font-bold text-white">Install packages</h2>
+        <PackagePlus class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Passo 1</span>
+        <h2 class="mt-3 text-2xl font-bold text-white">Instale os packages</h2>
         <pre><code>bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm</code></pre>
       </article>
       <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Step 2</span>
-        <h2 class="mt-3 text-2xl font-bold text-white">Push before deploy</h2>
+        <DatabaseZap class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Passo 2</span>
+        <h2 class="mt-3 text-2xl font-bold text-white">Sincronize antes do deploy</h2>
         <pre><code>bunx hyprpay push -y</code></pre>
       </article>
     </div>
   </Section>
 
-  <Section eyebrow="Config" title="Create a server-only HyprPay module.">
+  <Section eyebrow="Config" title="Crie um módulo server-only do HyprPay.">
     <pre><code>{configCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Checkout" title="Create a customer and redirect to payment.">
+  <Section eyebrow="Checkout" title="Crie customer e redirecione para pagamento.">
     <pre><code>{checkoutCode}</code></pre>
   </Section>
 </BaseLayout>
