@@ -26,7 +26,7 @@ export default defineHyprPayConfig({
     description="init cria a config. push prepara banco e catálogo. status valida ambiente sem alterar nada."
   />
 
-  <Section>
+  <Section id="commands" eyebrow="Commands" title="Comandos disponíveis.">
     <Features
       items={[
         {
@@ -51,16 +51,16 @@ export default defineHyprPayConfig({
     />
   </Section>
 
-  <Section eyebrow="Config" title="Aponte para o mesmo banco e catálogo do app.">
+  <Section id="config" eyebrow="Config" title="Aponte para o mesmo banco e catálogo do app.">
     <pre><code>{configCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Produção" title="Rode push antes do build ou start.">
+  <Section id="production" eyebrow="Production" title="Rode push antes do build ou start.">
     <pre><code>hyprpay push -y && next build</code></pre>
     <p class="leading-7 text-muted-foreground">É o mesmo lugar onde você rodaria migrations. A versão nova do catálogo fica pronta antes do código novo subir.</p>
   </Section>
 
-  <Section eyebrow="Telemetria" title="PostHog via evlog, opt-in.">
+  <Section id="telemetry" eyebrow="Telemetry" title="PostHog via evlog, opt-in.">
     <pre><code>HYPERPAY_TELEMETRY=1 POSTHOG_API_KEY=phc_... bunx hyprpay status</code></pre>
     <p class="leading-7 text-muted-foreground">Desative com <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code> ou <code>DO_NOT_TRACK=1</code>.</p>
   </Section>

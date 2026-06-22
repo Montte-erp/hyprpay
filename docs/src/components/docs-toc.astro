@@ -1,0 +1,27 @@
+---
+import { ListFilter } from "@lucide/astro";
+import { sidebarGroups } from "../navigation";
+
+interface Props {
+  active: string;
+}
+
+const { active } = Astro.props;
+const activeItem = sidebarGroups.flatMap((group) => group.items).find((item) => item.href === active);
+const sections = activeItem?.sections ?? [];
+---
+<aside class="hidden min-h-[calc(100vh-3.5rem)] border-l border-border bg-background xl:block">
+  <div class="sticky top-14 px-5 py-6">
+    <div class="mb-3 flex items-center gap-2 text-sm text-foreground">
+      <ListFilter class="h-4 w-4 text-muted-foreground" aria-hidden="true" />
+      <span>On this page</span>
+    </div>
+    <nav class="space-y-2" aria-label="On this page">
+      {sections.map((section) => (
+        <a class="block border-l border-border pl-3 text-sm leading-6 text-muted-foreground transition hover:border-primary hover:text-foreground" href={section.href}>
+          {section.label}
+        </a>
+      ))}
+    </nav>
+  </div>
+</aside>

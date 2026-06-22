@@ -30,16 +30,12 @@ export const hyprpay = createHyprPay({
   active="/"
 >
   <Hero
-    eyebrow="Billing em TypeScript"
+    eyebrow="Introduction"
     title="Billing sem prender seu app ao gateway."
     description="Defina produtos, planos e limites uma vez. Use Asaas ou Abacate Pay atrás do mesmo runtime."
-    actions={[
-      { href: "/quickstart", label: "Integrar agora" },
-      { href: "/architecture", label: "Ver arquitetura", variant: "secondary" },
-    ]}
   />
 
-  <Section eyebrow="O que é" title="Um framework de billing embutido no seu app." description="HyprPay guarda o estado no seu Postgres, chama gateways só nas bordas e expõe APIs pequenas para checkout, assinaturas e entitlements.">
+  <Section id="what-is" eyebrow="What is HyprPay" title="Um framework de billing embutido no seu app." description="HyprPay guarda o estado no seu Postgres, chama gateways só nas bordas e expõe APIs pequenas para checkout, assinaturas e entitlements.">
     <Features
       items={[
         {
@@ -61,7 +57,7 @@ export const hyprpay = createHyprPay({
     />
   </Section>
 
-  <Section eyebrow="Exemplo" title="Crie a instância server-side.">
+  <Section id="example" eyebrow="Example" title="Crie a instância server-side.">
     <pre><code>{catalogCode}</code></pre>
   </Section>
 </BaseLayout>

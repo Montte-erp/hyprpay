@@ -2,9 +2,9 @@ import { tv } from "tailwind-variants";
 
 export const card = tv({
   base: [
-    "group/card flex flex-col rounded-xl bg-card text-card-foreground ring-1 ring-border",
+    "group/card flex flex-col rounded-md bg-card text-card-foreground ring-1 ring-border",
     "has-data-[slot=card-footer]:pb-0 has-[>img:first-child]:pt-0",
-    "*:[img:first-child]:rounded-t-xl *:[img:last-child]:rounded-b-xl",
+    "*:[img:first-child]:rounded-t-md *:[img:last-child]:rounded-b-md",
   ],
   variants: {
     size: {

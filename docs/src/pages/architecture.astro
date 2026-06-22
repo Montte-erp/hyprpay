@@ -15,12 +15,12 @@ const layers = [
 ---
 <BaseLayout title="Arquitetura" description="Camadas do HyprPay e limites entre core, store, gateways e integrações." active="/architecture">
   <Hero
-    eyebrow="Arquitetura"
+    eyebrow="Architecture"
     title="Core pequeno. Estado local. Gateways na borda."
     description="O app fala com HyprPay. HyprPay grava no Postgres e chama o provider apenas quando precisa cobrar, assinar ou normalizar webhook."
   />
 
-  <Section eyebrow="Camadas" title="Separação que evita acoplamento.">
+  <Section id="design" eyebrow="Design" title="Separação que evita acoplamento.">
     <Features
       items={[
         {
@@ -42,7 +42,7 @@ const layers = [
     />
   </Section>
 
-  <Section eyebrow="Boundaries" title="Estrutura do repo.">
+  <Section id="boundaries" eyebrow="Boundaries" title="Estrutura do repo.">
     <Card class="overflow-hidden shadow-sm">
       <CardContent class="divide-y divide-border p-0">
         {layers.map(([name, description]) => (
@@ -55,7 +55,7 @@ const layers = [
     </Card>
   </Section>
 
-  <Section eyebrow="Invariantes" title="Regras do runtime.">
+  <Section id="invariants" eyebrow="Runtime rules" title="Regras do runtime.">
     <Features
       items={[
         {

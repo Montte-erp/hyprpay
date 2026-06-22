@@ -1,0 +1,45 @@
+---
+import { Search } from "@lucide/astro";
+import { sidebarGroups } from "../navigation";
+
+interface Props {
+  active: string;
+}
+
+const { active } = Astro.props;
+---
+<aside class="hidden min-h-[calc(100vh-3.5rem)] border-r border-border bg-background lg:block">
+  <div class="sticky top-14 flex h-[calc(100vh-3.5rem)] flex-col overflow-y-auto px-3 py-4">
+    <div class="mb-3 flex items-center justify-between rounded-md border border-border bg-card/40 px-3 py-2 text-xs text-muted-foreground">
+      <span>v0.1 (latest)</span>
+      <span class="font-mono">⌘</span>
+    </div>
+
+    <div class="mb-5 flex items-center gap-2 rounded-md border border-border bg-card/40 px-3 py-2 text-sm text-muted-foreground">
+      <Search class="h-4 w-4" aria-hidden="true" />
+      <span>Search</span>
+      <kbd class="ml-auto rounded border border-border px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
+    </div>
+
+    <nav class="space-y-5" aria-label="Docs navigation">
+      {sidebarGroups.map((group) => (
+        <section>
+          <p class="mb-2 px-2 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">{group.label}</p>
+          <div class="space-y-1">
+            {group.items.map((item) => (
+              <a
+                href={item.href}
+                class:list={[
+                  "block rounded-md px-2 py-1.5 text-sm transition",
+                  item.href === active ? "bg-card text-foreground ring-1 ring-border" : "text-muted-foreground hover:bg-card/60 hover:text-foreground",
+                ]}
+              >
+                {item.label}
+              </a>
+            ))}
+          </div>
+        </section>
+      ))}
+    </nav>
+  </div>
+</aside>

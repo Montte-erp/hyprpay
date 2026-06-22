@@ -1,7 +1,7 @@
 ---
 import Logo from "./logo.astro";
 import { Button } from "./starwind/button";
-import { navItems } from "../navigation";
+import { topNavItems } from "../navigation";
 
 interface Props {
   active: string;
@@ -9,37 +9,30 @@ interface Props {
 
 const { active } = Astro.props;
 ---
-<header class="sticky top-0 z-40 border-b border-border bg-background/75 backdrop-blur-xl">
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-    <Logo />
-    <nav class="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">
-      {navItems.map(item => (
+<header class="sticky top-0 z-50 h-14 border-b border-border bg-background">
+  <div class="mx-auto grid h-full max-w-[1440px] grid-cols-[1fr_auto] items-center lg:grid-cols-[256px_minmax(0,1fr)_180px]">
+    <div class="flex h-full items-center border-r border-border px-4">
+      <Logo />
+    </div>
+
+    <nav class="hidden h-full items-center justify-center gap-12 lg:flex" aria-label="Top navigation">
+      {topNavItems.map(item => (
         <a
           href={item.href}
           class:list={[
-            "rounded-full px-3 py-2 text-sm font-medium transition",
-            item.href === active ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
+            "flex h-full items-center border-b px-1 text-[11px] font-semibold tracking-widest transition",
+            item.href === active ? "border-foreground text-foreground" : "border-transparent text-muted-foreground hover:text-foreground",
           ]}
         >
           {item.label}
         </a>
       ))}
     </nav>
-    <Button class="hidden sm:inline-flex" variant="outline" href="/quickstart">
-      Quickstart
-    </Button>
+
+    <div class="flex h-full items-center justify-end px-3">
+      <Button class="h-9 rounded-none px-4 text-xs tracking-wide" variant="default" href="/quickstart">
+        QUICKSTART
+      </Button>
+    </div>
   </div>
-  <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:hidden" aria-label="Navegação mobile">
-    {navItems.map(item => (
-      <a
-        href={item.href}
-        class:list={[
-          "shrink-0 rounded-full px-3 py-2 text-sm font-medium transition",
-          item.href === active ? "bg-secondary text-secondary-foreground" : "text-muted-foreground hover:bg-muted hover:text-foreground",
-        ]}
-      >
-        {item.label}
-      </a>
-    ))}
-  </nav>
 </header>

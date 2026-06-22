@@ -35,7 +35,7 @@ return Response.json(response);`;
     description="HyprPay resolve acesso com subscriptions ativas e grants do catálogo. Uso só é consumido quando a ação termina com sucesso."
   />
 
-  <Section>
+  <Section id="types" eyebrow="Types" title="Tipos de entitlement.">
     <Features
       items={[
         {
@@ -57,11 +57,11 @@ return Response.json(response);`;
     />
   </Section>
 
-  <Section eyebrow="Antes" title="Cheque acesso antes de consumir recurso.">
+  <Section id="before" eyebrow="Before" title="Cheque acesso antes de consumir recurso.">
     <pre><code>{checkCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Depois" title="Reporte uso só depois do sucesso.">
+  <Section id="after" eyebrow="After" title="Reporte uso só depois do sucesso.">
     <pre><code>{reportCode}</code></pre>
   </Section>
 </BaseLayout>

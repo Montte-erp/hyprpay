@@ -61,20 +61,20 @@ const checkout = await Effect.runPromise(
 ---
 <BaseLayout title="Quickstart" description="Instale HyprPay, configure Postgres, defina o catálogo e crie seu primeiro checkout." active="/quickstart">
   <Hero
-    eyebrow="Quickstart"
+    eyebrow="Installation"
     title="Instale, configure, sincronize."
     description="O fluxo é o mesmo de migrations: defina billing em código, rode push antes do deploy e use a API server-side."
   />
 
-  <Section eyebrow="Passos" title="Setup mínimo.">
+  <Section id="steps" eyebrow="Steps" title="Setup mínimo.">
     <Steps items={steps} />
   </Section>
 
-  <Section eyebrow="Config" title="Arquivo server-only.">
+  <Section id="config" eyebrow="Config" title="Arquivo server-only.">
     <pre><code>{configCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Checkout" title="Crie o customer e redirecione.">
+  <Section id="checkout" eyebrow="Checkout" title="Crie o customer e redirecione.">
     <pre><code>{checkoutCode}</code></pre>
   </Section>
 </BaseLayout>

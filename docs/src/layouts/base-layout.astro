@@ -1,7 +1,8 @@
 ---
 import "../assets/styles/starwind.css";
+import DocsSidebar from "../components/docs-sidebar.astro";
+import DocsToc from "../components/docs-toc.astro";
 import SiteHeader from "../components/site-header.astro";
-import SiteFooter from "../components/site-footer.astro";
 import { site } from "../navigation";
 
 interface Props {
@@ -27,9 +28,12 @@ const canonicalTitle = title === site.name ? site.name : `${title} | ${site.name
   </head>
   <body class="min-h-screen antialiased">
     <SiteHeader active={active} />
-    <main>
-      <slot />
-    </main>
-    <SiteFooter />
+    <div class="mx-auto grid max-w-[1440px] lg:grid-cols-[256px_minmax(0,1fr)] xl:grid-cols-[256px_minmax(0,1fr)_240px]">
+      <DocsSidebar active={active} />
+      <main class="min-w-0">
+        <slot />
+      </main>
+      <DocsToc active={active} />
+    </div>
   </body>
 </html>
