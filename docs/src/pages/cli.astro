@@ -1,0 +1,47 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const configCode = `import { defineHyprPayConfig } from "@hyprpay/cli";
+import { hyprpay } from "./src/hyprpay";
+
+export default defineHyprPayConfig({
+  hyprpay,
+  databaseUrl: process.env.DATABASE_URL,
+});`;
+---
+<DocsLayout
+  title="CLI"
+  description="Use the CLI to initialize a project, apply Postgres schema changes, sync catalog versions, and validate deploy readiness."
+  active="cli"
+>
+  <section class="steps">
+    <article class="step">
+      <span class="step-number">1</span>
+      <h3>Initialize</h3>
+      <pre><code>bunx hyprpay init</code></pre>
+      <p>Creates a starter config and shows the expected Postgres + catalog wiring.</p>
+    </article>
+    <article class="step">
+      <span class="step-number">2</span>
+      <h3>Configure</h3>
+      <pre><code>{configCode}</code></pre>
+    </article>
+    <article class="step">
+      <span class="step-number">3</span>
+      <h3>Push before deploy</h3>
+      <pre><code>bunx hyprpay push -y && bun run build</code></pre>
+      <p>The command applies idempotent Postgres setup and stores immutable catalog versions before the new app code starts serving traffic.</p>
+    </article>
+    <article class="step">
+      <span class="step-number">4</span>
+      <h3>Check status in CI</h3>
+      <pre><code>bunx hyprpay status --throw</code></pre>
+      <p>Use this to fail fast when config, store, or catalog sync is not ready.</p>
+    </article>
+  </section>
+
+  <h2>Telemetry</h2>
+  <p>CLI telemetry is off by default. It sends operational events through evlog to PostHog only when explicitly enabled.</p>
+  <pre><code>HYPERPAY_TELEMETRY=1 POSTHOG_API_KEY=phc_... bunx hyprpay status</code></pre>
+  <p>Explicit opt-out always wins: <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code>, or <code>DO_NOT_TRACK=1</code>.</p>
+</DocsLayout>

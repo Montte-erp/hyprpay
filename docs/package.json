@@ -1,0 +1,17 @@
+{
+  "name": "@hyprpay/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "typecheck": "astro check",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@astrojs/check": "^0.9.9",
+    "astro": "^6.4.8"
+  }
+}

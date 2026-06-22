@@ -1,0 +1,65 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const installCode = `bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm`;
+const catalogCode = `import { createHyprPay, feature, plan, product } from "@hyprpay/core";
+import { createAsaasProvider } from "@hyprpay/gateway-asaas";
+import { postgresStore } from "@hyprpay/store-postgres";
+
+const messages = feature.metered({ id: "messages", reset: "month" });
+const pro = plan({
+  id: "pro",
+  group: "base",
+  price: { amountMinor: 1990, currency: "BRL", interval: "month" },
+  includes: [messages({ limit: 2_000 })],
+});
+
+export const hyprpay = createHyprPay({
+  catalog: [product({ id: "app", name: "App", plans: [pro] })],
+  store: postgresStore({ db }),
+  provider: createAsaasProvider({ apiKey: process.env.ASAAS_API_KEY ?? "" }),
+});`;
+---
+<DocsLayout
+  title="Billing without gateway lock-in"
+  description="HyprPay gives Brazilian SaaS products a typed catalog, local entitlements, Postgres as source of truth, and thin payment gateways for Asaas and Abacate Pay."
+  active="intro"
+>
+  <div class="badge-line">
+    <span class="badge">Effect v4 runtime</span>
+    <span class="badge">Postgres-first</span>
+    <span class="badge">Gateway agnostic</span>
+    <span class="badge">Better Auth plugin</span>
+  </div>
+
+  <div class="cta-row">
+    <a class="button" href="/quickstart">Start integrating</a>
+    <a class="button secondary" href="/architecture">See architecture</a>
+  </div>
+
+  <section class="grid">
+    <article class="card">
+      <h3>Catalog in code</h3>
+      <p>Define products, plans, prices, features, and benefits once. The CLI syncs immutable catalog versions into Postgres before deploy.</p>
+    </article>
+    <article class="card">
+      <h3>Local capabilities</h3>
+      <p>Entitlements, usage meters, license keys, downloads, seats, and portal sessions live in HyprPay instead of the gateway.</p>
+    </article>
+    <article class="card">
+      <h3>Replaceable gateways</h3>
+      <p>Asaas and Abacate Pay only map checkout, subscription, refund, and webhook contracts. Your app keeps the same billing API.</p>
+    </article>
+  </section>
+
+  <h2>Install</h2>
+  <pre><code>{installCode}</code></pre>
+
+  <h2>Shape</h2>
+  <pre><code>{catalogCode}</code></pre>
+
+  <section class="callout">
+    <h3>Design direction</h3>
+    <p>HyprPay borrows the ergonomic ideas of PayKit and Better Auth—small factories, typed plugins, and deploy-time sync—without copying provider-specific architecture or tying users to a single gateway.</p>
+  </section>
+</DocsLayout>

@@ -1,0 +1,58 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const checkCode = `const access = await Effect.runPromise(
+  hyprpay.entitlements.check({
+    customerId: customer.id,
+    featureId: "messages",
+    amount: 1,
+  }),
+);
+
+if (!access.allowed) {
+  return Response.json({ error: "Limite de uso atingido." }, { status: 403 });
+}`;
+const reportCode = `const response = await generateMessage(input);
+
+await Effect.runPromise(
+  hyprpay.entitlements.report({
+    customerId: customer.id,
+    featureId: "messages",
+    amount: 1,
+    idempotencyKey: requestId,
+  }),
+);
+
+return Response.json(response);`;
+---
+<DocsLayout
+  title="Entitlements"
+  description="Gate product behavior through local feature grants. Active paid plans win over default plans, and idempotent usage reports protect metered balances."
+  active="entitlements"
+>
+  <section class="grid">
+    <article class="card">
+      <h3>Boolean features</h3>
+      <p>Use <code>feature.boolean</code> for on/off gates such as priority support, advanced reports, or premium models.</p>
+    </article>
+    <article class="card">
+      <h3>Metered features</h3>
+      <p>Use <code>feature.metered</code> for limits such as messages, seats, credits, exports, or AI generations.</p>
+    </article>
+    <article class="card">
+      <h3>Provider independent</h3>
+      <p>Entitlements are derived from local plans and committed billing events, not from gateway-specific API calls.</p>
+    </article>
+  </section>
+
+  <h2>Check before work</h2>
+  <pre><code>{checkCode}</code></pre>
+
+  <h2>Report after success</h2>
+  <pre><code>{reportCode}</code></pre>
+
+  <section class="callout">
+    <h3>Important behavior</h3>
+    <p>When a customer has an active subscription, HyprPay resolves feature limits from that paid plan before falling back to the default plan in the catalog.</p>
+  </section>
+</DocsLayout>

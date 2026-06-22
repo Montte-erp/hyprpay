@@ -1,0 +1,91 @@
+{
+  "name": "@hyprpay/core",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./adapter": {
+      "types": "./dist/adapter.d.ts",
+      "import": "./dist/adapter.js"
+    },
+    "./benefits": {
+      "types": "./dist/benefits/schema.d.ts",
+      "import": "./dist/benefits/schema.js"
+    },
+    "./capabilities": {
+      "types": "./dist/capabilities.d.ts",
+      "import": "./dist/capabilities.js"
+    },
+    "./catalog": {
+      "types": "./dist/catalog.d.ts",
+      "import": "./dist/catalog.js"
+    },
+    "./downloads": {
+      "types": "./dist/downloads/schema.d.ts",
+      "import": "./dist/downloads/schema.js"
+    },
+    "./entitlements": {
+      "types": "./dist/entitlements/schema.d.ts",
+      "import": "./dist/entitlements/schema.js"
+    },
+    "./errors": {
+      "types": "./dist/errors.d.ts",
+      "import": "./dist/errors.js"
+    },
+    "./license-keys": {
+      "types": "./dist/license-keys/schema.d.ts",
+      "import": "./dist/license-keys/schema.js"
+    },
+    "./meters": {
+      "types": "./dist/meters/schema.d.ts",
+      "import": "./dist/meters/schema.js"
+    },
+    "./plugin": {
+      "types": "./dist/plugin.d.ts",
+      "import": "./dist/plugin.js"
+    },
+    "./portal": {
+      "types": "./dist/portal/schema.d.ts",
+      "import": "./dist/portal/schema.js"
+    },
+    "./schemas": {
+      "types": "./dist/schemas.d.ts",
+      "import": "./dist/schemas.js"
+    },
+    "./seats": {
+      "types": "./dist/seats/schema.d.ts",
+      "import": "./dist/seats/schema.js"
+    },
+    "./store": {
+      "types": "./dist/store.d.ts",
+      "import": "./dist/store.js"
+    },
+    "./telemetry": {
+      "types": "./dist/telemetry.d.ts",
+      "import": "./dist/telemetry.js"
+    }
+  },
+  "hyprpay": {
+    "sourceRoot": "."
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "bun ../tooling/bunup/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "publint": "bunx publint --strict"
+  },
+  "dependencies": {
+    "effect": "4.0.0-beta.85"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.3",
+    "drizzle-orm": "1.0.0-beta.22"
+  }
+}

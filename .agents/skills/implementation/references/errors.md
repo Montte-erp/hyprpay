@@ -1,53 +1,41 @@
-# Errors — better-result + evlog
+# Errors — Effect tagged errors
 
 Use esta referência ao criar ou alterar falhas esperadas.
 
 ## Regras
 
-- Importe `Result` e `TaggedError` de `better-result`.
-- Importe `defineErrorCatalog` de `evlog`.
-- Falhas esperadas retornam `Result<T, BillingError>` ou erro específico do bounded context.
+- Importe `Effect` e `Data` de `effect`.
+- Falhas esperadas vivem no error channel: `Effect.Effect<TValue, BillingError, R>`.
 - Não retorne `string`, `Error`, `unknown` ou objeto cru como erro.
 - Não use `throw` para regra de negócio, provider indisponível, payload inválido ou webhook inválido.
-- Não use `try/catch`; use `Result.tryPromise`.
+- Não use `try/catch`; use `Effect.tryPromise`.
 - Mensagens user-facing em pt-BR.
 
-## Catálogo
+## Tagged errors
 
-Cada bounded context define catálogo local:
+Cada bounded context define erros tagged locais quando necessário. Para erros centrais, `BillingError` vive em `core/src/errors.ts`.
 
 ```ts
-const providerErrors = defineErrorCatalog("hyprpay.asaas", {
-  INVALID_CONFIG: {
-    status: 400,
-    message: "Configuração do Asaas inválida.",
-    tags: ["hyprpay", "asaas"],
-  },
-});
+import { Data } from "effect";
 
-declare module "evlog" {
-  interface RegisteredErrorCatalogs {
-    "hyprpay.asaas": typeof providerErrors;
-  }
-}
+export class ProviderRequestFailed extends Data.TaggedError("ProviderRequestFailed")<{
+  readonly message: string;
+  readonly provider: string;
+  readonly status?: number;
+}> {}
 ```
 
 Use nomes específicos:
 
-- `hyprpay.billing`
-- `hyprpay.asaas`
-- `hyprpay.webhooks`
-- `hyprpay.entitlements`
+- `BillingError`
+- `ProviderError`
+- `WebhookError`
+- `EntitlementError`
 
-Evite nomes largos como `app`, `common`, `errors`.
-
-## TaggedError
-
-Use uma classe por bounded context quando necessário. Para erros centrais, `BillingError` vive em `packages/core/src/errors.ts`.
+Evite nomes largos como `AppError`, `CommonError` ou `UnknownError`.
 
 Payload pequeno:
 
-- `error`
 - `message`
 - `provider?`
 - `status?`
@@ -60,46 +48,33 @@ Não incluir:
 - objeto inteiro de SDK
 - request body completo
 
-## Result.tryPromise
+## Effect.tryPromise
 
 ```ts
-const responseResult = await Result.tryPromise({
+const response = yield* Effect.tryPromise({
   try: () => fetch(url, init),
   catch: () =>
-    new BillingError({
-      error: billingErrors.PROVIDER_REQUEST_FAILED(),
+    new ProviderRequestFailed({
       message: "Falha ao chamar o provedor de pagamento.",
       provider: "asaas",
     }),
 });
-
-if (Result.isError(responseResult)) {
-  return responseResult;
-}
 ```
 
-## Zod parse
+## Effect Schema parse
 
-Use `safeParse` e converta falha para `Result.err` tipado.
+Use schemas nos boundaries e converta falha para erro tipado.
 
 ```ts
-const parsed = schema.safeParse(input);
-
-if (!parsed.success) {
-  return Result.err(
-    new BillingError({
-      error: billingErrors.INVALID_INPUT(),
-      message: "Dados de billing inválidos.",
-    }),
-  );
-}
+const parsed = yield* Schema.decodeUnknown(inputSchema)(input).pipe(
+  Effect.mapError(() => new InvalidInput({ message: "Dados de billing inválidos." })),
+);
 ```
 
 ## Checklist
 
-- Erro tem catálogo `evlog`?
-- `TaggedError` carrega o catalog error concreto?
+- Erro é tagged?
 - Mensagem está em pt-BR?
 - Sem `try/catch`?
 - Sem erro bruto de provider atravessando boundary?
-- Sem `Result<..., string | Error | unknown>`?
+- Sem `Effect<..., string | Error | unknown>`?

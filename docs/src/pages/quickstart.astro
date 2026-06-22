@@ -1,0 +1,96 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const configCode = `import { createHyprPay, feature, plan, product } from "@hyprpay/core";
+import { createAsaasProvider } from "@hyprpay/gateway-asaas";
+import { postgresStore } from "@hyprpay/store-postgres";
+import { hyprPayPostgresSchema } from "@hyprpay/store-postgres/schema";
+import { drizzle } from "drizzle-orm/bun-sql";
+
+const messages = feature.metered({ id: "messages", reset: "month" });
+const prioritySupport = feature.boolean({ id: "priority-support" });
+
+const free = plan({
+  id: "free",
+  group: "base",
+  default: true,
+  includes: [messages({ limit: 100 })],
+});
+
+const pro = plan({
+  id: "pro",
+  group: "base",
+  price: { amountMinor: 1990, currency: "BRL", interval: "month" },
+  includes: [messages({ limit: 2_000 }), prioritySupport()],
+});
+
+const app = product({ id: "app", name: "App", plans: [free, pro] });
+
+const db = drizzle({
+  connection: { url: process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/hyprpay" },
+  schema: hyprPayPostgresSchema,
+});
+
+export const hyprpay = createHyprPay({
+  catalog: [app],
+  store: postgresStore({ db }),
+  provider: createAsaasProvider({
+    apiKey: process.env.ASAAS_API_KEY ?? "",
+    server: "sandbox",
+    webhookToken: process.env.ASAAS_WEBHOOK_TOKEN,
+  }),
+});`;
+const usageCode = `import { Effect } from "effect";
+import { hyprpay } from "./hyprpay";
+
+const customer = await Effect.runPromise(
+  hyprpay.customers.create({
+    externalId: "user_123",
+    name: "Empresa XPTO",
+    email: "financeiro@xpto.com.br",
+  }),
+);
+
+const checkout = await Effect.runPromise(
+  hyprpay.checkouts.create({
+    customerId: customer.id,
+    planId: "pro",
+    amount: 1990,
+    methods: ["pix"],
+    successUrl: "https://app.example.com/billing/success",
+    cancelUrl: "https://app.example.com/billing",
+  }),
+);`;
+---
+<DocsLayout
+  title="Quickstart"
+  description="Create the HyprPay runtime, define a catalog, connect Postgres, and start a hosted checkout without leaking gateway details into your app."
+  active="quickstart"
+>
+  <section class="steps">
+    <article class="step">
+      <span class="step-number">1</span>
+      <h3>Install runtime packages</h3>
+      <pre><code>bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm</code></pre>
+    </article>
+
+    <article class="step">
+      <span class="step-number">2</span>
+      <h3>Create <code>hyprpay.ts</code></h3>
+      <p>Keep catalog, store, and gateway wiring in one server-only module.</p>
+      <pre><code>{configCode}</code></pre>
+    </article>
+
+    <article class="step">
+      <span class="step-number">3</span>
+      <h3>Push schema and catalog</h3>
+      <pre><code>bunx hyprpay push -y</code></pre>
+    </article>
+
+    <article class="step">
+      <span class="step-number">4</span>
+      <h3>Create customer and checkout</h3>
+      <pre><code>{usageCode}</code></pre>
+    </article>
+  </section>
+</DocsLayout>

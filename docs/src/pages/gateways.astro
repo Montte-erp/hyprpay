@@ -1,0 +1,47 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const asaasCode = `import { createAsaasProvider } from "@hyprpay/gateway-asaas";
+
+const provider = createAsaasProvider({
+  apiKey: process.env.ASAAS_API_KEY ?? "",
+  server: "sandbox",
+  webhookToken: process.env.ASAAS_WEBHOOK_TOKEN,
+});`;
+const abacateCode = `import { createAbacatePayProvider } from "@hyprpay/gateway-abacate-pay";
+
+const provider = createAbacatePayProvider({
+  apiKey: process.env.ABACATE_PAY_API_KEY ?? "",
+  webhookSecret: process.env.ABACATE_PAY_WEBHOOK_SECRET,
+});`;
+---
+<DocsLayout
+  title="Gateways"
+  description="Gateways translate HyprPay billing contracts into provider requests and normalize provider webhooks back into local billing events."
+  active="gateways"
+>
+  <section class="grid">
+    <article class="card">
+      <h3>Asaas</h3>
+      <p>Use Asaas for Brazilian payment methods such as PIX, boleto, and card-backed hosted checkout flows.</p>
+      <pre><code>{asaasCode}</code></pre>
+    </article>
+    <article class="card">
+      <h3>Abacate Pay</h3>
+      <p>Use Abacate Pay through the same checkout and webhook surface when your product needs a lighter gateway.</p>
+      <pre><code>{abacateCode}</code></pre>
+    </article>
+    <article class="card">
+      <h3>Contract</h3>
+      <p>Adapters implement <code>PaymentProviderAdapter</code>: customer, checkout, subscription, refund, and webhook parsing capabilities.</p>
+    </article>
+  </section>
+
+  <h2>Boundary rules</h2>
+  <ul>
+    <li>Provider responses are decoded with Effect Schema before becoming core records.</li>
+    <li>Unsupported provider capabilities return typed Effect failures, never no-ops.</li>
+    <li>Raw webhook payloads may exist only on <code>BillingEvent.payload</code>.</li>
+    <li>Benefits, entitlements, meters, and license keys remain local HyprPay capabilities.</li>
+  </ul>
+</DocsLayout>

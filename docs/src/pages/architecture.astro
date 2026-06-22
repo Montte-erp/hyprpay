@@ -1,0 +1,47 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+---
+<DocsLayout
+  title="Architecture"
+  description="HyprPay keeps billing logic in local domain modules, treats Postgres as the source of truth, and leaves gateways as replaceable adapters."
+  active="architecture"
+>
+  <section class="compare">
+    <div class="compare-row">
+      <strong>Better Auth</strong>
+      <p>Small server/client plugins, explicit endpoints, and composable factories. HyprPay mirrors that shape in <code>@hyprpay/better-auth</code> and in the core plugin builder.</p>
+    </div>
+    <div class="compare-row">
+      <strong>PayKit</strong>
+      <p>Catalog in code, CLI sync, and entitlement checks. HyprPay keeps those DX primitives but does not bind the model to Stripe or any single billing provider.</p>
+    </div>
+    <div class="compare-row">
+      <strong>Polar-like DX</strong>
+      <p>Benefits are first-class: feature gates, metered credits, license keys, downloads, repository access, role grants, seats, and custom hooks.</p>
+    </div>
+  </section>
+
+  <h2>Layer map</h2>
+  <div class="grid">
+    <article class="card">
+      <h3><code>core/*</code></h3>
+      <p>Domain APIs: customers, checkouts, subscriptions, webhooks, benefits, entitlements, meters, seats, portal sessions, and license keys.</p>
+    </article>
+    <article class="card">
+      <h3><code>stores/postgres</code></h3>
+      <p>Drizzle Postgres store. It owns durable records and immutable catalog versions. No billing state relies on memory.</p>
+    </article>
+    <article class="card">
+      <h3><code>gateways/*</code></h3>
+      <p>Provider adapters normalize external requests and webhooks. Raw provider payloads never cross the public API boundary.</p>
+    </article>
+  </div>
+
+  <h2>Why the gateway is thin</h2>
+  <p>Asaas and Abacate Pay can disagree on product IDs, payment links, webhook naming, and subscription semantics. HyprPay absorbs that difference at the adapter boundary, then runs entitlements, benefits, usage, and customer state locally.</p>
+
+  <section class="callout">
+    <h3>Invariant</h3>
+    <p>Your app talks to <code>hyprpay.customers</code>, <code>hyprpay.checkouts</code>, <code>hyprpay.subscriptions</code>, and <code>hyprpay.entitlements</code>. Switching gateway code should not force a product rewrite.</p>
+  </section>
+</DocsLayout>

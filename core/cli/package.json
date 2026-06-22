@@ -1,0 +1,40 @@
+{
+  "name": "@hyprpay/cli",
+  "version": "0.0.0",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "hyprpay": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./config": {
+      "types": "./dist/config.d.ts",
+      "import": "./dist/config.js"
+    },
+    "./telemetry": {
+      "types": "./dist/telemetry.d.ts",
+      "import": "./dist/telemetry.js"
+    }
+  },
+  "files": ["dist"],
+  "scripts": {
+    "build": "bun ../../tooling/bunup/index.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "publint": "bunx publint --strict"
+  },
+  "dependencies": {
+    "@effect/cli": "0.75.2",
+    "@effect/platform-node": "0.107.0",
+    "@hyprpay/core": "workspace:*",
+    "@hyprpay/store-postgres": "workspace:*",
+    "effect": "4.0.0-beta.85",
+    "evlog": "2.19.1"
+  }
+}

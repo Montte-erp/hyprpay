@@ -1,0 +1,55 @@
+---
+import DocsLayout from "../layouts/docs-layout.astro";
+
+const serverCode = `import { betterAuth } from "better-auth";
+import { betterAuthHyprPay } from "@hyprpay/better-auth";
+import { hyprpay } from "./hyprpay";
+
+export const auth = betterAuth({
+  plugins: [betterAuthHyprPay({ hyprpay })],
+});`;
+const clientCode = `import { createAuthClient } from "better-auth/client";
+import { betterAuthHyprPayClient } from "@hyprpay/better-auth/client";
+
+export const authClient = createAuthClient({
+  plugins: [betterAuthHyprPayClient()],
+});`;
+const upgradeCode = `const result = await authClient.hyprpay.subscription.upgrade({
+  planId: "pro",
+  successUrl: "/billing/success",
+  cancelUrl: "/billing",
+});
+
+if (result.data?.checkout.checkoutUrl) {
+  window.location.href = result.data.checkout.checkoutUrl;
+}`;
+---
+<DocsLayout
+  title="Better Auth integration"
+  description="Attach HyprPay to Better Auth with a server plugin for trusted billing endpoints and a client plugin for ergonomic subscription actions."
+  active="better-auth"
+>
+  <h2>Server plugin</h2>
+  <pre><code>{serverCode}</code></pre>
+
+  <h2>Client plugin</h2>
+  <pre><code>{clientCode}</code></pre>
+
+  <h2>Upgrade flow</h2>
+  <pre><code>{upgradeCode}</code></pre>
+
+  <section class="grid">
+    <article class="card">
+      <h3>Customer sync</h3>
+      <p>The Better Auth user ID is stored as <code>Customer.externalId</code>, so HyprPay keeps one billing customer per authenticated user.</p>
+    </article>
+    <article class="card">
+      <h3>Subscription list</h3>
+      <p>The plugin reads local HyprPay subscriptions. Postgres remains the source of truth after webhooks are committed.</p>
+    </article>
+    <article class="card">
+      <h3>Billing portal</h3>
+      <p>Client code requests a portal session without knowing which gateway currently powers checkout and billing.</p>
+    </article>
+  </section>
+</DocsLayout>

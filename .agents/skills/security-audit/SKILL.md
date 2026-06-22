@@ -38,7 +38,7 @@ Formato:
 
 ```md
 [P1] Webhook sem verificação permite marcar pagamento como pago
-Arquivo: `packages/<provider>/src/<provider>.ts`
+Arquivo: `gateways/<provider>/src/<provider>.ts`
 
 Evidência: ...
 Exploit: ...

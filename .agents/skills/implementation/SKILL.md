@@ -1,6 +1,6 @@
 ---
 name: implementation
-description: Guia de implementação do HyprPay para core, adapters, schemas, errors, testes e validação. Use ao criar, migrar, refatorar ou testar código em packages/*.
+description: Guia de implementação do HyprPay para core, gateways, stores, schemas, errors, testes e validação. Use ao criar, migrar, refatorar ou testar código em core/*, gateways/*, stores/* ou integrations/*.
 ---
 
 # Implementation
@@ -10,16 +10,16 @@ Use esta skill antes de alterar código no HyprPay.
 ## Leia também
 
 - Provider adapters, HTTP, webhooks e normalização: `references/provider-adapters.md`.
-- Erros, `better-result` e `evlog`: `references/errors.md`.
+- Erros, Effect e tagged errors: `references/errors.md`.
 
 ## Regras sempre ativas
 
 - API pública em inglês.
 - Mensagens visíveis ao usuário em pt-BR.
-- 100% Zod em inputs, outputs e payloads externos.
-- 100% `better-result` para falhas esperadas.
-- 100% `evlog` para catálogos de erro.
-- Sem `try/catch` em código de produção; use `Result.tryPromise`.
+- 100% Effect Schema em inputs, outputs e payloads externos.
+- 100% Effect para falhas esperadas; erros esperados vivem no error channel.
+- Erros de domínio usam tagged errors com payload pequeno e mensagens pt-BR.
+- Sem `try/catch` em código de produção; use `Effect.tryPromise`.
 - Sem `as` em TypeScript de produção.
 - Sem barrel files: não criar arquivo que só reexporta outros módulos.
 - Sem framework web; libraries devem rodar em Bun/Node/Edge quando possível.
@@ -30,18 +30,26 @@ Use esta skill antes de alterar código no HyprPay.
 ## Estrutura
 
 ```text
-packages/core/     # runtime createHyprPay, schemas, contratos, entitlements, errors
-packages/asaas/    # adapter Asaas
+core/                         # @hyprpay/core; domínios locais + runtime
+core/cli/                     # @hyprpay/cli; Effect/CLI helper estilo PayKit
+stores/postgres/              # Postgres Drizzle v1 RC; fonte da verdade
+gateways/asaas/               # gateway Asaas
+gateways/abacate-pay/         # gateway Abacate Pay
+integrations/alchemy/         # integração opcional Alchemy v2
+integrations/better-auth/     # plugin server/client Better Auth
+docs/                         # Astro docs site; conteúdo original de integração
 ```
 
 ## API style
 
-Inspiração: Better Auth.
+Inspiração: Better Auth, PayKit e DX do Polar sem lock-in de gateway.
 
-- Runtime por factory: `createHyprPay({ provider })`.
-- Sub APIs pequenas: `customers.create`, `charges.create`, `subscriptions.create`.
-- Adapters são plugins de provider, não subclasses.
-- Schemas ficam próximos dos contratos.
+- Runtime por factory: `createHyprPay({ provider, store, catalog })`.
+- Sub APIs pequenas: `customers.create`, `checkouts.create`, `subscriptions.create`, `refunds.create`, `benefits.grant`, `entitlements.check/report`, `meters.record`, `licenseKeys.issue`, `downloads.getAccess`, `seats.assign`, `portal.createSession`.
+- Gateways são plugins de provider, não subclasses.
+- Core nunca depende de SDK de gateway; gateways fazem HTTP/SDK mapping.
+- Schemas Effect ficam próximos dos contratos.
+- CLI usa `@effect/cli`; telemetria opt-in vai por evlog + PostHog, seguindo o padrão Better Auth (`HYPERPAY_TELEMETRY=1`, opt-out explícito).
 - Exports públicos explícitos em `package.json#exports`.
 - Evite abstrações antes do segundo provider real.
 
@@ -64,6 +72,6 @@ git diff --check
 Se alterar pacote específico:
 
 ```bash
-bun run --cwd packages/core typecheck
-bun run --cwd packages/asaas typecheck
+bun run --cwd core typecheck
+bun run --cwd core test
 ```

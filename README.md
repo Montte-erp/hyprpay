@@ -1,142 +1,172 @@
 # HyprPay
 
-Monorepo TypeScript para billing brasileiro com runtime plugin-first.
+Billing library TypeScript para produtos brasileiros/SaaS. A DX mira Polar/PayKit/Better Auth: catálogo em código, APIs pequenas, benefits locais e gateways substituíveis. O banco Postgres é a fonte da verdade; gateways só fazem cobrança, checkout, refund e webhook.
 
-## Workspaces atuais
+## Direção
 
-- `@hyprpay/core` — host de plugins, composição de API e handler HTTP.
-- `@hyprpay/catalog` — produtos e preços.
-- `@hyprpay/customers` — clientes.
-- `@hyprpay/checkouts` — checkout.
-- `@hyprpay/charges` — cobranças avulsas.
-- `@hyprpay/subscriptions` — assinaturas e uso.
-- `@hyprpay/webhooks` — ingestão e normalização de webhooks.
-- `@hyprpay/entitlements` — entitlements, benefits e license keys.
-- `@hyprpay/discounts` — cupons e descontos.
-- `@hyprpay/orders` — centro financeiro (orders + invoices).
-- `@hyprpay/refunds` — reembolsos (depende de orders).
-- `@hyprpay/meters` — usage/meters/credits.
-- `@hyprpay/seats` — billing por assento (invite/claim/charge).
-- `@hyprpay/drizzle` — adapters ORM para os plugins e schemas Drizzle.
-- `@hyprpay/orpc` — transporte oRPC/OpenAPI sobre `hyprpay.api` (com auth por token).
-- `@hyprpay/abacatepay` — gateway inicial, exposto por facetas compatíveis com os plugins.
+- 100% Effect para runtime e falhas esperadas.
+- 100% Effect Schema em boundaries.
+- Core dividido por domínio (`core/benefits`, `core/entitlements`, `core/meters`, etc.); `core/index.ts` só compõe o runtime.
+- Persistência primária em Postgres via Drizzle v1 RC e `@hyprpay/store-postgres`.
+- Gateways finos em `gateways/*`: Asaas e Abacate Pay.
+- CLI auxiliar em `core/cli` com Effect/CLI, inspirado no PayKit (`hyprpay push -y && next build`).
+- Telemetria opt-in via evlog + PostHog, seguindo o modelo do Better Auth: env opt-in, opt-out explícito e ID anônimo hashado.
+
+## Arquitetura de pastas
+
+```text
+core/                         # @hyprpay/core; runtime e domínios locais
+  benefits/                   # grants, benefits e capabilities Polar-like
+  checkouts/                  # hosted checkout local + provider ref
+  customers/                  # customer API e vínculo externalId
+  entitlements/               # checks e report de uso
+  license-keys/               # keys e ativações
+  meters/                     # metering local
+  portal/                     # sessões de portal customer-owned
+  seats/                      # assentos por benefit
+  webhooks/                   # normalização e commit de eventos
+  cli/                        # @hyprpay/cli; init/push/status
+stores/postgres/              # @hyprpay/store-postgres; Drizzle v1 RC + Postgres
+gateways/asaas/               # adapter Asaas
+gateways/abacate-pay/         # adapter Abacate Pay
+integrations/alchemy/         # provider config para Alchemy v2
+integrations/better-auth/     # plugin server/client Better Auth
+tooling/                      # build/config shared
+```
+
+## DX
 
 ```ts
-import { createHyprPay } from "@hyprpay/core";
-import { catalog } from "@hyprpay/catalog";
-import { customers } from "@hyprpay/customers";
-import { checkouts } from "@hyprpay/checkouts";
-import { charges } from "@hyprpay/charges";
-import { subscriptions } from "@hyprpay/subscriptions";
-import { webhooks } from "@hyprpay/webhooks";
-import { entitlements } from "@hyprpay/entitlements";
-import { createDrizzleAdapters, createDrizzleEntitlementsStore } from "@hyprpay/drizzle";
-import { createAbacatePayGateway } from "@hyprpay/abacatepay";
+import { Effect } from "effect";
+import { benefit, createHyprPay, feature, plan, product } from "@hyprpay/core";
+import { createAsaasProvider } from "@hyprpay/gateway-asaas";
+import { postgresStore } from "@hyprpay/store-postgres";
+import { hyprPayPostgresSchema } from "@hyprpay/store-postgres/schema";
+import { drizzle } from "drizzle-orm/bun-sql";
 
-const drizzle = createDrizzleAdapters(db);
-const gateway = createAbacatePayGateway({
-  apiKey: process.env.ABACATEPAY_API_KEY ?? "",
-  environment: "sandbox",
-  webhookSecret: process.env.ABACATEPAY_WEBHOOK_SECRET,
-});
+const messages = feature.metered({ id: "messages", reset: "month" });
 
-const hyprpay = createHyprPay({
-  plugins: [
-    catalog({ database: drizzle.catalog, provider: gateway.catalog }),
-    customers({ database: drizzle.customers, provider: gateway.customers }),
-    checkouts({ database: drizzle.checkouts, catalog: drizzle.catalog, provider: gateway.checkouts }),
-    charges({ database: drizzle.charges, provider: gateway.charges }),
-    subscriptions({ database: drizzle.subscriptions, catalog: drizzle.catalog, provider: gateway.subscriptions }),
-    webhooks({
-      database: drizzle.webhooks,
-      charges: drizzle.charges,
-      checkouts: drizzle.checkouts,
-      subscriptions: drizzle.subscriptions,
-      provider: gateway.webhooks,
-      webhookPath: "/billing/webhooks",
-    }),
-    entitlements({
-      store: createDrizzleEntitlementsStore(db),
-    }),
+const pro = plan({
+  id: "pro",
+  group: "base",
+  price: { amountMinor: 1990, currency: "BRL", interval: "month" },
+  includes: [
+    messages({ limit: 2_000 }),
+    benefit.licenseKey({ id: "license", prefix: "HYP", limitActivations: 3 }),
+    benefit.fileDownload({ id: "assets", fileId: "starter-kit", url: "https://cdn.example.com/starter-kit.zip" }),
+    benefit.seats({ id: "team-seats", quantity: 5 }),
   ],
 });
 
-const product = await hyprpay.api.catalog.products.create({
-  slug: "pro",
-  name: "Plano Pro",
+const app = product({ id: "app", name: "App", plans: [pro] });
+
+const db = drizzle({
+  connection: { url: process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/hyprpay" },
+  schema: hyprPayPostgresSchema,
 });
 
-await hyprpay.api.customers.create({
-  name: "Empresa XPTO",
-  email: "financeiro@xpto.com.br",
-  document: "12345678000199",
+export const hyprpay = createHyprPay({
+  catalog: [app],
+  store: postgresStore({ db }),
+  provider: createAsaasProvider({
+    apiKey: process.env.ASAAS_API_KEY ?? "",
+    server: "sandbox",
+    webhookToken: process.env.ASAAS_WEBHOOK_TOKEN,
+  }),
 });
 
-await hyprpay.api.entitlements.grant({
-  customerId: "cust_123",
-  feature: "reports.export",
-  limit: 10,
-});
-```
-
-## Transporte oRPC + OpenAPI
-
-O pacote `@hyprpay/orpc` expõe `hyprpay.api` por HTTP. Rotas que mutam exigem um
-bearer token (`authedProcedure`); leituras públicas usam `billingProcedure`; o
-agregador de estado do cliente (`customers.state`) usa `authedProcedure` com
-escopo por cliente. Webhooks continuam fora do oRPC (raw, verificados por
-assinatura).
-
-```ts
-import {
-  createHyprPayOrpcRouter,
-  createHyprPayOpenAPIHandler,
-  type HyprPayVerifyToken,
-} from "@hyprpay/orpc";
-import {
-  createGetCustomerState,
-  createCustomerStateWatcher,
-} from "@hyprpay/customers";
-
-// Verificador de token fornecido pelo host (default-deny quando ausente).
-const verifyToken: HyprPayVerifyToken = (token) =>
-  token === process.env.HYPRPAY_SECRET
-    ? { kind: "organization", subject: "org_root" }
-    : null;
-
-// Agregador read-only: cliente + assinaturas ativas + entitlements + saldos de
-// meter + orders recentes. Emite `billing.customer.state_changed` quando muda.
-const getCustomerState = createCustomerStateWatcher(
-  { emit: hyprpay.emit },
-  createGetCustomerState({
-    customers: hyprpay.api.customers,
-    subscriptions: hyprpay.api.subscriptions,
-    orders: hyprpay.api.orders,
-    // entitlements/meters são opcionais: ports indexados por cliente que o host
-    // fornece (a fonte por-feature/por-meter não enumera por cliente).
+const customer = await Effect.runPromise(
+  hyprpay.customers.create({
+    externalId: "user_123",
+    name: "Empresa XPTO",
+    email: "financeiro@xpto.com.br",
+    document: "12345678000199",
   }),
 );
 
-const handler = createHyprPayOpenAPIHandler();
+const checkout = await Effect.runPromise(
+  hyprpay.checkouts.create({
+    customerId: customer.id,
+    planId: "pro",
+    amount: 1990,
+    methods: ["pix"],
+    successUrl: "https://app.example.com/success",
+    cancelUrl: "https://app.example.com/cancel",
+  }),
+);
 
-// Por requisição, passe a api + auth + agregador como contexto do oRPC.
-const { response } = await handler.handle(request, {
-  prefix: "/api",
-  context: { api: hyprpay.api, headers: request.headers, verifyToken, getCustomerState },
-});
-
-// GET /api/billing/customers/{idOrExternalId}/state  ->  customers.state
+await Effect.runPromise(
+  hyprpay.webhooks.handle({
+    processor: "manual",
+    type: "checkout.paid",
+    checkoutId: checkout.id,
+  }),
+);
 ```
 
-`createHyprPayOrpcRouter()` compõe todos os routers: `catalog`, `customers`,
-`checkouts`, `subscriptions`, `orders`, `refunds`, `meters`, `discounts`,
-`entitlements`, `seats`.
+## CLI
+
+```bash
+bunx hyprpay init
+bunx hyprpay push -y
+bunx hyprpay status --throw
+```
+
+Production usage:
+
+```bash
+bunx hyprpay push -y && next build
+```
+
+`hyprpay push -y` aplica migrações idempotentes do store Postgres e sincroniza versões imutáveis do catálogo, no estilo PayKit.
+
+Telemetria da CLI é opt-in:
+
+```bash
+HYPERPAY_TELEMETRY=1 POSTHOG_API_KEY=phc_... bunx hyprpay status
+```
+
+Opt-out sempre vence: `HYPERPAY_TELEMETRY_DISABLED=1`, `HYPRPAY_TELEMETRY_DISABLED=1` ou `DO_NOT_TRACK=1`.
+
+## Better Auth
+
+```ts
+import { betterAuth } from "better-auth";
+import { betterAuthHyprPay } from "@hyprpay/better-auth";
+
+export const auth = betterAuth({
+  plugins: [betterAuthHyprPay({ hyprpay })],
+});
+```
+
+Client:
+
+```ts
+import { createAuthClient } from "better-auth/client";
+import { betterAuthHyprPayClient } from "@hyprpay/better-auth/client";
+
+export const authClient = createAuthClient({
+  plugins: [betterAuthHyprPayClient()],
+});
+```
+
+A integração sincroniza o usuário Better Auth como `Customer.externalId`, inicia checkout para upgrade, lista subscriptions do banco HyprPay e cria portal sessions locais.
+
+## Docs
+
+```bash
+bun run --cwd docs dev
+bun run --cwd docs build
+```
+
+O site em Astro fica em `docs/` e documenta quickstart, CLI, Better Auth, entitlements e gateways com conteúdo original inspirado na clareza do PayKit.
 
 ## Scripts
 
 ```bash
 bun install
-bun run typecheck
 bun run build
-bun test
+bun run typecheck
+bun run test
+bun run check
 ```
