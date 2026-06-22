@@ -1,5 +1,6 @@
 ---
-import { Blocks, Cable, ShieldCheck } from "@lucide/astro";
+import Features from "../components/features.astro";
+import { Card, CardContent } from "../components/starwind/card";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -9,10 +10,10 @@ const layers = [
   ["stores/postgres", "Fonte durável da verdade com Drizzle Postgres e versões imutáveis de catálogo."],
   ["gateways/*", "Adapters substituíveis para Asaas e Abacate Pay. Eles traduzem provider bruto para contratos do core."],
   ["integrations/*", "Glue opcional para Better Auth e Alchemy v2 sem contaminar o runtime principal."],
-  ["docs/", "Astro docs com layout widgetizado inspirado no AstroWind e conteúdo original de integração."],
+  ["docs/", "Astro docs com componentes Starwind, Tailwind v4, Sora e conteúdo original de integração."],
 ];
 ---
-<BaseLayout title="Arquitetura" description="Comparação da arquitetura HyprPay com Better Auth, PayKit e AstroWind." active="/architecture">
+<BaseLayout title="Arquitetura" description="Comparação da arquitetura HyprPay com Better Auth, PayKit e Starwind." active="/architecture">
   <Hero
     eyebrow="Architecture"
     title="Core pequeno, módulos fundos, zero lock-in."
@@ -20,50 +21,59 @@ const layers = [
   />
 
   <Section eyebrow="Comparação" title="O que fica de cada referência.">
-    <div class="grid gap-5 md:grid-cols-3">
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <Blocks class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
-        <h3 class="text-xl font-bold text-white">Better Auth</h3>
-        <p class="mt-3 leading-7 text-slate-300">Factory-first, plugins server/client separados, mesmo <code>id</code> nos dois lados e endpoints namespaced.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <Cable class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
-        <h3 class="text-xl font-bold text-white">PayKit</h3>
-        <p class="mt-3 leading-7 text-slate-300">Catálogo em código, sync no deploy, status check em CI e entitlement como primitiva de produto.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <ShieldCheck class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
-        <h3 class="text-xl font-bold text-white">AstroWind</h3>
-        <p class="mt-3 leading-7 text-slate-300">Docs estáticas, componentes de Hero/Section, Tailwind v4, SEO básico e visual SaaS sem JavaScript desnecessário.</p>
-      </article>
-    </div>
+    <Features
+      items={[
+        {
+          icon: "blocks",
+          title: "Better Auth",
+          description: "Factory-first, plugins server/client separados, mesmo id nos dois lados e endpoints namespaced.",
+        },
+        {
+          icon: "book-open-check",
+          title: "PayKit",
+          description: "Catálogo em código, sync no deploy, status check em CI e entitlement como primitiva de produto.",
+        },
+        {
+          icon: "wind",
+          title: "Starwind",
+          description: "Docs estáticas com componentes de Button/Card, Tailwind v4, tokens CSS e visual SaaS sem JavaScript desnecessário.",
+        },
+      ]}
+    />
   </Section>
 
   <Section eyebrow="Boundaries" title="A estrutura do repo espelha o runtime.">
-    <div class="divide-y divide-white/10 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
-      {layers.map(([name, description]) => (
-        <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]">
-          <strong class="font-mono text-cyan-200">{name}</strong>
-          <p class="m-0 leading-7 text-slate-300">{description}</p>
-        </div>
-      ))}
-    </div>
+    <Card class="overflow-hidden shadow-xl">
+      <CardContent class="divide-y divide-border p-0">
+        {layers.map(([name, description]) => (
+          <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]">
+            <strong class="font-mono text-primary">{name}</strong>
+            <p class="m-0 leading-7 text-muted-foreground">{description}</p>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
   </Section>
 
   <Section eyebrow="Invariantes" title="O que não pode quebrar.">
-    <div class="grid gap-5 md:grid-cols-3">
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h3 class="text-xl font-bold text-white">Sem provider bruto no sucesso</h3>
-        <p class="mt-3 leading-7 text-slate-300">Gateways retornam refs normalizadas. Payload original só aparece em <code>BillingEvent.payload</code>.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h3 class="text-xl font-bold text-white">Capability ausente falha tipada</h3>
-        <p class="mt-3 leading-7 text-slate-300">Sem no-op silencioso. Operação não suportada retorna <code>CapabilityUnsupported</code>.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h3 class="text-xl font-bold text-white">Framework fora do core</h3>
-        <p class="mt-3 leading-7 text-slate-300">Better Auth e Alchemy são packages opcionais; <code>@hyprpay/core</code> não depende deles.</p>
-      </article>
-    </div>
+    <Features
+      items={[
+        {
+          icon: "shield-check",
+          title: "Sem provider bruto no sucesso",
+          description: "Gateways retornam refs normalizadas. Payload original só aparece em BillingEvent.payload.",
+        },
+        {
+          icon: "file-check",
+          title: "Capability ausente falha tipada",
+          description: "Sem no-op silencioso. Operação não suportada retorna CapabilityUnsupported.",
+        },
+        {
+          icon: "layers",
+          title: "Framework fora do core",
+          description: "Better Auth e Alchemy são packages opcionais; @hyprpay/core não depende deles.",
+        },
+      ]}
+    />
   </Section>
 </BaseLayout>

@@ -1,4 +1,5 @@
 ---
+import Features from "../components/features.astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -18,39 +19,44 @@ export default defineHyprPayConfig({
   catalog,
 });`;
 ---
-<BaseLayout title="CLI" description="HyprPay CLI commands for setup, catalog sync, status checks, and telemetry." active="/cli">
+<BaseLayout title="CLI" description="Comandos HyprPay para setup, sync de catálogo, status de deploy e telemetria." active="/cli">
   <Hero
     eyebrow="CLI"
-    title="Deploy-time safety for billing changes."
-    description="The CLI is intentionally small: initialize config, sync Postgres catalog versions, and check whether production is ready."
+    title="Segurança de deploy para mudanças de billing."
+    description="A CLI é pequena de propósito: inicializa config, sincroniza versões de catálogo no Postgres e valida se produção está pronta."
   />
 
   <Section>
-    <div class="grid gap-5 lg:grid-cols-3">
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-2xl font-bold text-white">init</h2>
-        <pre><code>bunx hyprpay init</code></pre>
-        <p class="leading-7 text-slate-300">Scaffold starter config and the expected Postgres runtime shape.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-2xl font-bold text-white">push</h2>
-        <pre><code>bunx hyprpay push -y</code></pre>
-        <p class="leading-7 text-slate-300">Apply idempotent store setup and write immutable catalog versions.</p>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <h2 class="text-2xl font-bold text-white">status</h2>
-        <pre><code>bunx hyprpay status --throw</code></pre>
-        <p class="leading-7 text-slate-300">Fail CI when billing config, database, or catalog sync is not ready.</p>
-      </article>
-    </div>
+    <Features
+      items={[
+        {
+          icon: "terminal",
+          title: "init",
+          description: "Cria uma config inicial e mostra o shape esperado de Postgres + catálogo.",
+          code: "bunx hyprpay init",
+        },
+        {
+          icon: "upload-cloud",
+          title: "push",
+          description: "Aplica setup idempotente do store e grava versões imutáveis do catálogo.",
+          code: "bunx hyprpay push -y",
+        },
+        {
+          icon: "activity",
+          title: "status",
+          description: "Falha a CI quando config, banco ou catálogo ainda não estão prontos.",
+          code: "bunx hyprpay status --throw",
+        },
+      ]}
+    />
   </Section>
 
-  <Section eyebrow="Config" title="Point the CLI at the same runtime your app uses.">
+  <Section eyebrow="Config" title="Aponte a CLI para o mesmo banco e catálogo do app.">
     <pre><code>{configCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Telemetry" title="Opt-in PostHog events through evlog.">
+  <Section eyebrow="Telemetry" title="Eventos PostHog via evlog, sempre opt-in.">
     <pre><code>HYPERPAY_TELEMETRY=1 POSTHOG_API_KEY=phc_... bunx hyprpay status</code></pre>
-    <p class="leading-7 text-slate-300">Opt-out always wins with <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code>, or <code>DO_NOT_TRACK=1</code>.</p>
+    <p class="leading-7 text-muted-foreground">Opt-out sempre vence com <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code> ou <code>DO_NOT_TRACK=1</code>.</p>
   </Section>
 </BaseLayout>

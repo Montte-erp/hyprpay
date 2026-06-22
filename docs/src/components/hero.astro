@@ -1,5 +1,6 @@
 ---
 import { ArrowRight, Sparkles } from "@lucide/astro";
+import { Button } from "./starwind/button";
 interface Action {
   href: string;
   label: string;
@@ -18,19 +19,19 @@ const { eyebrow, title, description, actions = [] } = Astro.props;
 <section class="relative overflow-hidden py-16 sm:py-24 lg:py-28">
   <div class="absolute inset-x-0 top-16 -z-10 mx-auto h-64 max-w-4xl rounded-full bg-primary/20 blur-3xl" aria-hidden="true"></div>
   <div class="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
-    <p class="animate-fade-up inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-sm font-bold uppercase tracking-[0.2em] text-cyan-300">
+    <p class="animate-fade-up inline-flex items-center gap-2 rounded-full border border-border bg-secondary px-3 py-1 text-sm font-bold uppercase tracking-widest text-secondary-foreground shadow-sm">
       <Sparkles class="h-4 w-4" aria-hidden="true" />
       {eyebrow}
     </p>
-    <h1 class="animate-fade-up mt-5 font-heading text-5xl font-black leading-[0.92] tracking-[-0.055em] text-white sm:text-7xl lg:text-8xl">{title}</h1>
-    <p class="animate-fade-up mx-auto mt-6 max-w-3xl text-lg leading-8 text-slate-300 sm:text-xl">{description}</p>
+    <h1 class="animate-fade-up mt-5 font-heading text-5xl font-black leading-[0.92] tracking-tighter text-foreground sm:text-7xl lg:text-8xl">{title}</h1>
+    <p class="animate-fade-up mx-auto mt-6 max-w-3xl text-lg leading-8 text-muted-foreground sm:text-xl">{description}</p>
     {actions.length > 0 && (
       <div class="animate-fade-up mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
         {actions.map(action => (
-          <a class={action.variant === "secondary" ? "btn-secondary" : "btn-primary"} href={action.href}>
+          <Button variant={action.variant === "secondary" ? "outline" : "primary"} size="lg" href={action.href}>
             {action.label}
             {action.variant !== "secondary" && <ArrowRight class="ml-2 h-4 w-4" aria-hidden="true" />}
-          </a>
+          </Button>
         ))}
       </div>
     )}

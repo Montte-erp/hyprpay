@@ -1,4 +1,5 @@
 ---
+import Features from "../components/features.astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -27,26 +28,40 @@ await Effect.runPromise(
 
 return Response.json(response);`;
 ---
-<BaseLayout title="Entitlements" description="Gate product behavior through local feature grants and metered balances." active="/entitlements">
+<BaseLayout title="Entitlements" description="Controle comportamento do produto com feature grants locais e saldos metered." active="/entitlements">
   <Hero
     eyebrow="Entitlements"
-    title="Check first. Report only after success."
-    description="HyprPay resolves feature access from active paid plans first, then falls back to default catalog grants."
+    title="Cheque antes. Reporte só depois do sucesso."
+    description="HyprPay resolve acesso por planos pagos ativos primeiro e cai para grants default do catálogo quando não há assinatura ativa."
   />
 
   <Section>
-    <div class="grid gap-5 md:grid-cols-3">
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6"><h3 class="text-xl font-bold text-white">Boolean</h3><p class="mt-3 leading-7 text-slate-300">Use for premium access, priority support, or feature gates.</p></article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6"><h3 class="text-xl font-bold text-white">Metered</h3><p class="mt-3 leading-7 text-slate-300">Use for messages, exports, credits, API calls, or AI generations.</p></article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6"><h3 class="text-xl font-bold text-white">Idempotent</h3><p class="mt-3 leading-7 text-slate-300">Report usage with idempotency keys so retries do not double charge balances.</p></article>
-    </div>
+    <Features
+      items={[
+        {
+          icon: "toggle-right",
+          title: "Boolean",
+          description: "Use para premium access, suporte prioritário ou feature gates.",
+        },
+        {
+          icon: "gauge",
+          title: "Metered",
+          description: "Use para mensagens, exports, créditos, chamadas de API ou gerações de IA.",
+        },
+        {
+          icon: "fingerprint",
+          title: "Idempotente",
+          description: "Reporte uso com idempotency key para retries não consumirem saldo duas vezes.",
+        },
+      ]}
+    />
   </Section>
 
-  <Section eyebrow="Before work" title="Check access before consuming resources.">
+  <Section eyebrow="Antes do trabalho" title="Cheque acesso antes de consumir recurso.">
     <pre><code>{checkCode}</code></pre>
   </Section>
 
-  <Section eyebrow="After success" title="Report usage only when the action succeeds.">
+  <Section eyebrow="Depois do sucesso" title="Reporte uso somente quando a ação der certo.">
     <pre><code>{reportCode}</code></pre>
   </Section>
 </BaseLayout>

@@ -1,5 +1,5 @@
 ---
-import { DatabaseZap, PackagePlus } from "@lucide/astro";
+import Features from "../components/features.astro";
 import Hero from "../components/hero.astro";
 import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
@@ -46,20 +46,23 @@ const checkout = await Effect.runPromise(
   />
 
   <Section>
-    <div class="grid gap-5 lg:grid-cols-2">
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <PackagePlus class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
-        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Passo 1</span>
-        <h2 class="mt-3 text-2xl font-bold text-white">Instale os packages</h2>
-        <pre><code>bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm</code></pre>
-      </article>
-      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
-        <DatabaseZap class="mb-5 h-8 w-8 text-cyan-300" aria-hidden="true" />
-        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Passo 2</span>
-        <h2 class="mt-3 text-2xl font-bold text-white">Sincronize antes do deploy</h2>
-        <pre><code>bunx hyprpay push -y</code></pre>
-      </article>
-    </div>
+    <Features
+      columns={2}
+      items={[
+        {
+          icon: "package-plus",
+          title: "Passo 1 · Instale os packages",
+          description: "Adicione core, store Postgres, gateway brasileiro, Effect e Drizzle no módulo server-side do app.",
+          code: "bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm",
+        },
+        {
+          icon: "database-zap",
+          title: "Passo 2 · Sincronize antes do deploy",
+          description: "Rode o setup idempotente e grave versões imutáveis do catálogo no Postgres.",
+          code: "bunx hyprpay push -y",
+        },
+      ]}
+    />
   </Section>
 
   <Section eyebrow="Config" title="Crie um módulo server-only do HyprPay.">

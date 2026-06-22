@@ -1,0 +1,128 @@
+---
+import {
+  Activity,
+  ChartColumn,
+  Blocks,
+  BookOpenCheck,
+  Boxes,
+  CreditCard,
+  DatabaseZap,
+  DoorOpen,
+  FileCheckCorner,
+  FingerprintPattern,
+  Gauge,
+  KeyRound,
+  Layers,
+  PackagePlus,
+  PlugZap,
+  Radio,
+  Repeat2,
+  ScanLine,
+  ShieldCheck,
+  Sparkles,
+  Terminal,
+  ToggleRight,
+  CloudUpload,
+  UserRoundCheck,
+  Webhook,
+  Wind,
+  Workflow,
+} from "@lucide/astro";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./starwind/card";
+
+interface FeatureItem {
+  title: string;
+  description: string;
+  icon: string;
+  code?: string;
+}
+
+interface Props {
+  items: readonly FeatureItem[];
+  columns?: 2 | 3 | 4;
+}
+
+const { items, columns = 3 } = Astro.props;
+const columnsClass = columns === 2 ? "lg:grid-cols-2" : columns === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "md:grid-cols-3";
+
+const iconFor = (icon: string) => {
+  switch (icon) {
+    case "activity":
+      return Activity;
+    case "bar-chart":
+      return ChartColumn;
+    case "blocks":
+      return Blocks;
+    case "book-open-check":
+      return BookOpenCheck;
+    case "boxes":
+      return Boxes;
+    case "credit-card":
+      return CreditCard;
+    case "database-zap":
+      return DatabaseZap;
+    case "door-open":
+      return DoorOpen;
+    case "file-check":
+      return FileCheckCorner;
+    case "fingerprint":
+      return FingerprintPattern;
+    case "gauge":
+      return Gauge;
+    case "key-round":
+      return KeyRound;
+    case "layers":
+      return Layers;
+    case "package-plus":
+      return PackagePlus;
+    case "plug-zap":
+      return PlugZap;
+    case "radio":
+      return Radio;
+    case "repeat":
+      return Repeat2;
+    case "scan-line":
+      return ScanLine;
+    case "shield-check":
+      return ShieldCheck;
+    case "terminal":
+      return Terminal;
+    case "toggle-right":
+      return ToggleRight;
+    case "upload-cloud":
+      return CloudUpload;
+    case "user-check":
+      return UserRoundCheck;
+    case "webhook":
+      return Webhook;
+    case "wind":
+      return Wind;
+    case "workflow":
+      return Workflow;
+    default:
+      return Sparkles;
+  }
+};
+---
+<div class:list={["grid gap-5", columnsClass]}>
+  {items.map((item) => {
+    const Icon = iconFor(item.icon);
+
+    return (
+      <Card class="group h-full shadow-xl transition duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-secondary/40">
+        <CardHeader>
+          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-secondary-foreground ring-1 ring-border transition group-hover:bg-primary group-hover:text-primary-foreground">
+            <Icon class="h-6 w-6" aria-hidden="true" />
+          </div>
+          <CardTitle>{item.title}</CardTitle>
+          <CardDescription>{item.description}</CardDescription>
+        </CardHeader>
+        {item.code && (
+          <CardContent>
+            <pre><code>{item.code}</code></pre>
+          </CardContent>
+        )}
+      </Card>
+    );
+  })}
+</div>
