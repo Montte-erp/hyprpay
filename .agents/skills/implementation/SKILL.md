@@ -37,7 +37,7 @@ gateways/asaas/               # gateway Asaas
 gateways/abacate-pay/         # gateway Abacate Pay
 integrations/alchemy/         # integração opcional Alchemy v2
 integrations/better-auth/     # plugin server/client Better Auth
-docs/                         # Astro docs site; conteúdo original de integração
+apps/docs/                    # Astro landing + docs site
 ```
 
 ## API style

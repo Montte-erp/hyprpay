@@ -112,20 +112,53 @@ const ensureCustomer = (
     });
   });
 
-const errorMessage = (error: unknown): string => {
-  const message = typeof error === "object" && error !== null ? Reflect.get(error, "message") : undefined;
-  return typeof message === "string" ? message : "Falha ao executar billing.";
-};
+interface EndpointSuccess<TValue extends Record<string, unknown>> {
+  readonly body: {
+    readonly ok: true;
+    readonly data: TValue;
+  };
+  readonly init?: undefined;
+}
 
-const ok = <TValue extends Record<string, unknown>>(data: TValue) => ({
+interface EndpointFailure {
+  readonly body: {
+    readonly ok: false;
+    readonly error: {
+      readonly message: string;
+    };
+  };
+  readonly init: {
+    readonly status: 400;
+  };
+}
+
+type EndpointResult<TValue extends Record<string, unknown>> = EndpointSuccess<TValue> | EndpointFailure;
+
+const ok = <TValue extends Record<string, unknown>>(data: TValue): EndpointSuccess<TValue>["body"] => ({
   ok: true,
   data,
 });
 
-const fail = (message: string) => ({
+const fail = (message: string): EndpointFailure["body"] => ({
   ok: false,
   error: { message },
 });
+
+const runEndpoint = async <TValue extends Record<string, unknown>>(
+  effect: Effect.Effect<TValue, HyprPayError | HyprPayBetterAuthError>,
+  message: string,
+): Promise<EndpointResult<TValue>> => {
+  const result = await Effect.runPromiseExit(effect);
+
+  if (Exit.isSuccess(result)) {
+    return { body: ok(result.value) };
+  }
+
+  return {
+    body: fail(message),
+    init: { status: 400 },
+  };
+};
 
 export const betterAuthHyprPay = (options: HyprPayBetterAuthOptions): BetterAuthPlugin => {
   const hyprpay = options.hyprpay;
@@ -137,84 +170,80 @@ export const betterAuthHyprPay = (options: HyprPayBetterAuthOptions): BetterAuth
         method: "POST",
         use: [sessionMiddleware],
       }, async ctx => {
-        const result = await Effect.runPromiseExit(ensureCustomer(hyprpay, ctx.context.session.user));
+        const result = await runEndpoint(
+          Effect.map(ensureCustomer(hyprpay, ctx.context.session.user), customer => ({ customer })),
+          "Falha ao sincronizar cliente.",
+        );
 
-        if (Exit.isSuccess(result)) {
-          return ctx.json(ok({ customer: result.value }));
-        }
-
-        return ctx.json(fail("Falha ao sincronizar cliente."), { status: 400 });
+        return ctx.json(result.body, result.init);
       }),
       hyprpaySubscriptionUpgrade: createAuthEndpoint("/hyprpay/subscription/upgrade", {
         method: "POST",
         use: [sessionMiddleware],
       }, async ctx => {
-        const result = await Effect.runPromiseExit(Effect.gen(function* () {
-          const input = yield* decodeCheckoutUpgradeInput(ctx.body);
-          const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
-          const amount = input.amount ?? (yield* planAmount(hyprpay.catalog, input.planId));
-          const checkout = yield* hyprpay.checkouts.create({
-            customerId: customer.id,
-            planId: input.planId,
-            amount,
-            ...(input.successUrl === undefined ? {} : { successUrl: input.successUrl }),
-            ...(input.cancelUrl === undefined ? {} : { cancelUrl: input.cancelUrl }),
-            metadata: {
-              betterAuthUserId: ctx.context.session.user.id,
-            },
-          });
+        const result = await runEndpoint(
+          Effect.gen(function* () {
+            const input = yield* decodeCheckoutUpgradeInput(ctx.body);
+            const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
+            const amount = input.amount ?? (yield* planAmount(hyprpay.catalog, input.planId));
+            const checkout = yield* hyprpay.checkouts.create({
+              customerId: customer.id,
+              planId: input.planId,
+              amount,
+              ...(input.successUrl === undefined ? {} : { successUrl: input.successUrl }),
+              ...(input.cancelUrl === undefined ? {} : { cancelUrl: input.cancelUrl }),
+              metadata: {
+                betterAuthUserId: ctx.context.session.user.id,
+              },
+            });
 
-          return { checkout };
-        }));
+            return { checkout };
+          }),
+          "Falha ao iniciar assinatura.",
+        );
 
-        if (Exit.isSuccess(result)) {
-          return ctx.json(ok(result.value));
-        }
-
-        return ctx.json(fail("Falha ao iniciar assinatura."), { status: 400 });
+        return ctx.json(result.body, result.init);
       }),
       hyprpaySubscriptionList: createAuthEndpoint("/hyprpay/subscription/list", {
         method: "GET",
         use: [sessionMiddleware],
       }, async ctx => {
-        const result = await Effect.runPromiseExit(Effect.gen(function* () {
-          const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
-          const subscriptions = yield* hyprpay.subscriptions.list({ customerId: customer.id });
-          return { subscriptions };
-        }));
+        const result = await runEndpoint(
+          Effect.gen(function* () {
+            const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
+            const subscriptions = yield* hyprpay.subscriptions.list({ customerId: customer.id });
+            return { subscriptions };
+          }),
+          "Falha ao listar assinaturas.",
+        );
 
-        if (Exit.isSuccess(result)) {
-          return ctx.json(ok(result.value));
-        }
-
-        return ctx.json(fail("Falha ao listar assinaturas."), { status: 400 });
+        return ctx.json(result.body, result.init);
       }),
       hyprpayBillingPortal: createAuthEndpoint("/hyprpay/subscription/billing-portal", {
         method: "POST",
         use: [sessionMiddleware],
       }, async ctx => {
-        const result = await Effect.runPromiseExit(Effect.gen(function* () {
-          const input = yield* decodePortalInput(ctx.body);
-          const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
-          const session = yield* hyprpay.portal.createSession({
-            customerId: customer.id,
-            ...(input.returnUrl === undefined ? {} : { returnUrl: input.returnUrl }),
-          });
+        const result = await runEndpoint(
+          Effect.gen(function* () {
+            const input = yield* decodePortalInput(ctx.body);
+            const customer = yield* ensureCustomer(hyprpay, ctx.context.session.user);
+            const session = yield* hyprpay.portal.createSession({
+              customerId: customer.id,
+              ...(input.returnUrl === undefined ? {} : { returnUrl: input.returnUrl }),
+            });
 
-          return { session };
-        }));
+            return { session };
+          }),
+          "Falha ao criar portal de billing.",
+        );
 
-        if (Exit.isSuccess(result)) {
-          return ctx.json(ok(result.value));
-        }
-
-        return ctx.json(fail("Falha ao criar portal de billing."), { status: 400 });
+        return ctx.json(result.body, result.init);
       }),
     },
     $ERROR_CODES: {
       HYPERPAY_BILLING_FAILED: {
         code: "HYPERPAY_BILLING_FAILED",
-        message: errorMessage(new HyprPayBetterAuthError({ message: "Falha ao executar billing." })),
+        message: "Falha ao executar billing.",
       },
     },
   };

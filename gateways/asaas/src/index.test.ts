@@ -37,15 +37,18 @@ describe("Asaas request mapping", () => {
     });
   });
 
-  it("maps hosted checkout payment requests without leaking gateway concerns to core", async () => {
-    const request = await Effect.runPromise(toAsaasPaymentRequest(checkoutInput));
-
-    expect(request.customer).toBe("cus_provider_123");
-    expect(request.billingType).toBe("PIX");
-    expect(request.value).toBe(129.9);
-    expect(request.externalReference).toBe("chk_123");
-    expect(request.callback?.successUrl).toBe("https://app.example.com/success");
-  });
+  it.effect("maps hosted checkout payment requests without leaking gateway concerns to core", () =>
+    toAsaasPaymentRequest(checkoutInput).pipe(
+      Effect.tap(request =>
+        Effect.sync(() => {
+          expect(request.customer).toBe("cus_provider_123");
+          expect(request.billingType).toBe("PIX");
+          expect(request.value).toBe(129.9);
+          expect(request.externalReference).toBe("chk_123");
+          expect(request.callback?.successUrl).toBe("https://app.example.com/success");
+        }),
+      ),
+    ));
 });
 
 describe("normalizeAsaasWebhookPayload", () => {

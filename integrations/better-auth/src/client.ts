@@ -22,7 +22,7 @@ export const betterAuthHyprPayClient = (options: HyprPayBetterAuthClientOptions 
   const basePath = options.basePath ?? defaultBasePath;
 
   return {
-    id: "hyprpay-client",
+    id: "hyprpay",
     $InferServerPlugin: {},
     pathMethods: {
       [`${basePath}/customer/sync`]: "POST",

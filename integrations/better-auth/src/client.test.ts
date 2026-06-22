@@ -5,7 +5,7 @@ describe("betterAuthHyprPayClient", () => {
   it("registers billing routes under the HyprPay namespace", () => {
     const plugin = betterAuthHyprPayClient();
 
-    expect(plugin.id).toBe("hyprpay-client");
+    expect(plugin.id).toBe("hyprpay");
     expect(plugin.pathMethods).toEqual({
       "/hyprpay/customer/sync": "POST",
       "/hyprpay/subscription/upgrade": "POST",

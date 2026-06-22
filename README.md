@@ -1,6 +1,6 @@
 # HyprPay
 
-Billing library TypeScript para produtos brasileiros/SaaS. A DX mira Polar/PayKit/Better Auth: catálogo em código, APIs pequenas, benefits locais e gateways substituíveis. O banco Postgres é a fonte da verdade; gateways só fazem cobrança, checkout, refund e webhook.
+Biblioteca TypeScript de billing para produtos brasileiros. O catálogo fica em código, o Postgres guarda o estado local e gateways só fazem cobrança, checkout, refund e webhook.
 
 ## Direção
 
@@ -9,8 +9,8 @@ Billing library TypeScript para produtos brasileiros/SaaS. A DX mira Polar/PayKi
 - Core dividido por domínio (`core/benefits`, `core/entitlements`, `core/meters`, etc.); `core/index.ts` só compõe o runtime.
 - Persistência primária em Postgres via Drizzle v1 RC e `@hyprpay/store-postgres`.
 - Gateways finos em `gateways/*`: Asaas e Abacate Pay.
-- CLI auxiliar em `core/cli` com Effect/CLI, inspirado no PayKit (`hyprpay push -y && next build`).
-- Telemetria opt-in via evlog + PostHog, seguindo o modelo do Better Auth: env opt-in, opt-out explícito e ID anônimo hashado.
+- CLI auxiliar em `core/cli` com Effect/CLI para `init`, `push` e `status`.
+- Telemetria opt-in via evlog + PostHog: env opt-in, opt-out explícito e ID anônimo hashado.
 
 ## Arquitetura de pastas
 
@@ -34,7 +34,7 @@ integrations/better-auth/     # plugin server/client Better Auth
 tooling/                      # build/config shared
 ```
 
-## DX
+## Uso
 
 ```ts
 import { Effect } from "effect";
@@ -118,7 +118,7 @@ Production usage:
 bunx hyprpay push -y && next build
 ```
 
-`hyprpay push -y` aplica migrações idempotentes do store Postgres e sincroniza versões imutáveis do catálogo, no estilo PayKit.
+`hyprpay push -y` aplica migrações idempotentes do store Postgres e sincroniza versões imutáveis do catálogo.
 
 Telemetria da CLI é opt-in:
 
@@ -155,11 +155,11 @@ A integração sincroniza o usuário Better Auth como `Customer.externalId`, ini
 ## Docs
 
 ```bash
-bun run --cwd docs dev
-bun run --cwd docs build
+bun run --cwd apps/docs dev
+bun run --cwd apps/docs build
 ```
 
-O site em Astro fica em `docs/` e documenta quickstart, CLI, Better Auth, entitlements e gateways com conteúdo original inspirado na clareza do PayKit.
+O site em Astro fica em `apps/docs/` e documenta landing page, quickstart, CLI, Better Auth, entitlements e gateways com Starwind, Tailwind v4 e fonte Sora.
 
 ## Scripts
 

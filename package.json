@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "packageManager": "bun@1.3.14",
-  "workspaces": ["core", "core/cli", "docs", "gateways/*", "stores/*", "integrations/*", "tooling/*"],
+  "workspaces": ["core", "core/cli", "apps/*", "gateways/*", "stores/*", "integrations/*", "tooling/*"],
   "scripts": {
     "build": "nx run-many -t build",
     "typecheck": "nx run-many -t typecheck",
     "test": "nx run-many -t test",
     "publint": "nx run-many -t publint",
-    "check": "bun run typecheck && bun run test && bun run build"
+    "check:static": "bun tooling/static-checks/check-clean-code.ts",
+    "check": "bun run check:static && bun run typecheck && bun run test && bun run build"
   },
   "devDependencies": {
     "@effect/vitest": "4.0.0-beta.85",

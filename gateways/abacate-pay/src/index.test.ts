@@ -20,16 +20,19 @@ const checkoutInput: ProviderCheckoutInput = {
 };
 
 describe("AbacatePay request mapping", () => {
-  it("maps hosted billing links from core checkout input", async () => {
-    const request = await Effect.runPromise(toAbacatePayBillingRequest(checkoutInput));
-
-    expect(request.frequency).toBe("ONE_TIME");
-    expect(request.methods).toEqual(["PIX", "CARD"]);
-    expect(request.returnUrl).toBe("https://app.example.com/cancel");
-    expect(request.completionUrl).toBe("https://app.example.com/success");
-    expect(request.externalId).toBe("chk_123");
-    expect(request.products[0]?.price).toBe(12990);
-  });
+  it.effect("maps hosted billing links from core checkout input", () =>
+    toAbacatePayBillingRequest(checkoutInput).pipe(
+      Effect.tap(request =>
+        Effect.sync(() => {
+          expect(request.frequency).toBe("ONE_TIME");
+          expect(request.methods).toEqual(["PIX", "CARD"]);
+          expect(request.returnUrl).toBe("https://app.example.com/cancel");
+          expect(request.completionUrl).toBe("https://app.example.com/success");
+          expect(request.externalId).toBe("chk_123");
+          expect(request.products[0]?.price).toBe(12990);
+        }),
+      ),
+    ));
 });
 
 describe("normalizeAbacatePayWebhookPayload", () => {
