@@ -1,5 +1,7 @@
 ---
-import DocsLayout from "../layouts/docs-layout.astro";
+import Hero from "../components/hero.astro";
+import Section from "../components/section.astro";
+import BaseLayout from "../layouts/base-layout.astro";
 
 const asaasCode = `import { createAsaasProvider } from "@hyprpay/gateway-asaas";
 
@@ -15,33 +17,34 @@ const provider = createAbacatePayProvider({
   webhookSecret: process.env.ABACATE_PAY_WEBHOOK_SECRET,
 });`;
 ---
-<DocsLayout
-  title="Gateways"
-  description="Gateways translate HyprPay billing contracts into provider requests and normalize provider webhooks back into local billing events."
-  active="gateways"
->
-  <section class="grid">
-    <article class="card">
-      <h3>Asaas</h3>
-      <p>Use Asaas for Brazilian payment methods such as PIX, boleto, and card-backed hosted checkout flows.</p>
-      <pre><code>{asaasCode}</code></pre>
-    </article>
-    <article class="card">
-      <h3>Abacate Pay</h3>
-      <p>Use Abacate Pay through the same checkout and webhook surface when your product needs a lighter gateway.</p>
-      <pre><code>{abacateCode}</code></pre>
-    </article>
-    <article class="card">
-      <h3>Contract</h3>
-      <p>Adapters implement <code>PaymentProviderAdapter</code>: customer, checkout, subscription, refund, and webhook parsing capabilities.</p>
-    </article>
-  </section>
+<BaseLayout title="Gateways" description="Use Asaas or Abacate Pay behind the same HyprPay provider contract." active="/gateways">
+  <Hero
+    eyebrow="Gateways"
+    title="Provider adapters stay boring."
+    description="Gateways translate requests and normalize webhooks. Benefits, entitlements, and catalog state remain local HyprPay capabilities."
+  />
 
-  <h2>Boundary rules</h2>
-  <ul>
-    <li>Provider responses are decoded with Effect Schema before becoming core records.</li>
-    <li>Unsupported provider capabilities return typed Effect failures, never no-ops.</li>
-    <li>Raw webhook payloads may exist only on <code>BillingEvent.payload</code>.</li>
-    <li>Benefits, entitlements, meters, and license keys remain local HyprPay capabilities.</li>
-  </ul>
-</DocsLayout>
+  <Section>
+    <div class="grid gap-5 lg:grid-cols-2">
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-2xl font-bold text-white">Asaas</h2>
+        <p class="mt-3 leading-7 text-slate-300">PIX, boleto, card, hosted checkout, and webhook normalization for Brazilian billing.</p>
+        <pre><code>{asaasCode}</code></pre>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h2 class="text-2xl font-bold text-white">Abacate Pay</h2>
+        <p class="mt-3 leading-7 text-slate-300">A second gateway proving the core contract is provider agnostic.</p>
+        <pre><code>{abacateCode}</code></pre>
+      </article>
+    </div>
+  </Section>
+
+  <Section eyebrow="Adapter boundary" title="What gateways must never leak.">
+    <ul class="grid gap-3 text-slate-300 md:grid-cols-2">
+      <li class="rounded-2xl border border-white/10 bg-white/5 p-4">Raw provider success responses do not cross the public API.</li>
+      <li class="rounded-2xl border border-white/10 bg-white/5 p-4">Unsupported capabilities fail with typed Effect errors.</li>
+      <li class="rounded-2xl border border-white/10 bg-white/5 p-4">Raw webhook payloads only live on <code>BillingEvent.payload</code>.</li>
+      <li class="rounded-2xl border border-white/10 bg-white/5 p-4">Core stays free of gateway SDKs and provider-specific checkout details.</li>
+    </ul>
+  </Section>
+</BaseLayout>

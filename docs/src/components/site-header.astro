@@ -1,0 +1,42 @@
+---
+import Logo from "./logo.astro";
+import { navItems } from "../navigation";
+
+interface Props {
+  active: string;
+}
+
+const { active } = Astro.props;
+---
+<header class="sticky top-0 z-40 border-b border-white/10 bg-page/75 backdrop-blur-xl">
+  <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
+    <Logo />
+    <nav class="hidden items-center gap-1 lg:flex" aria-label="Navegação principal">
+      {navItems.map(item => (
+        <a
+          href={item.href}
+          class:list={[
+            "rounded-full px-3 py-2 text-sm font-medium transition",
+            item.href === active ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/8 hover:text-white",
+          ]}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+    <a class="btn-secondary hidden sm:inline-flex" href="/quickstart">Integrar</a>
+  </div>
+  <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:hidden" aria-label="Navegação mobile">
+    {navItems.map(item => (
+      <a
+        href={item.href}
+        class:list={[
+          "shrink-0 rounded-full px-3 py-2 text-sm font-medium transition",
+          item.href === active ? "bg-white/10 text-white" : "text-slate-300 hover:bg-white/8 hover:text-white",
+        ]}
+      >
+        {item.label}
+      </a>
+    ))}
+  </nav>
+</header>

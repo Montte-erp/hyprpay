@@ -1,0 +1,11 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className = "" } = Astro.props;
+---
+<a class:list={["inline-flex items-center gap-3 font-heading text-lg font-extrabold tracking-tight text-white", className]} href="/" aria-label="HyprPay home">
+  <span class="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-secondary text-sm font-black text-white shadow-lg shadow-primary/25">H</span>
+  <span>HyprPay</span>
+</a>

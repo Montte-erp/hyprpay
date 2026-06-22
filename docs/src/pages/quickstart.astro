@@ -1,54 +1,29 @@
 ---
-import DocsLayout from "../layouts/docs-layout.astro";
+import Hero from "../components/hero.astro";
+import Section from "../components/section.astro";
+import BaseLayout from "../layouts/base-layout.astro";
 
 const configCode = `import { createHyprPay, feature, plan, product } from "@hyprpay/core";
 import { createAsaasProvider } from "@hyprpay/gateway-asaas";
 import { postgresStore } from "@hyprpay/store-postgres";
-import { hyprPayPostgresSchema } from "@hyprpay/store-postgres/schema";
-import { drizzle } from "drizzle-orm/bun-sql";
 
 const messages = feature.metered({ id: "messages", reset: "month" });
-const prioritySupport = feature.boolean({ id: "priority-support" });
-
-const free = plan({
-  id: "free",
-  group: "base",
-  default: true,
-  includes: [messages({ limit: 100 })],
-});
-
+const free = plan({ id: "free", group: "base", default: true, includes: [messages({ limit: 100 })] });
 const pro = plan({
   id: "pro",
   group: "base",
   price: { amountMinor: 1990, currency: "BRL", interval: "month" },
-  includes: [messages({ limit: 2_000 }), prioritySupport()],
-});
-
-const app = product({ id: "app", name: "App", plans: [free, pro] });
-
-const db = drizzle({
-  connection: { url: process.env.DATABASE_URL ?? "postgres://postgres:postgres@localhost:5432/hyprpay" },
-  schema: hyprPayPostgresSchema,
+  includes: [messages({ limit: 2_000 })],
 });
 
 export const hyprpay = createHyprPay({
-  catalog: [app],
+  catalog: [product({ id: "app", name: "App", plans: [free, pro] })],
   store: postgresStore({ db }),
-  provider: createAsaasProvider({
-    apiKey: process.env.ASAAS_API_KEY ?? "",
-    server: "sandbox",
-    webhookToken: process.env.ASAAS_WEBHOOK_TOKEN,
-  }),
+  provider: createAsaasProvider({ apiKey: process.env.ASAAS_API_KEY ?? "", server: "sandbox" }),
 });`;
-const usageCode = `import { Effect } from "effect";
-import { hyprpay } from "./hyprpay";
 
-const customer = await Effect.runPromise(
-  hyprpay.customers.create({
-    externalId: "user_123",
-    name: "Empresa XPTO",
-    email: "financeiro@xpto.com.br",
-  }),
+const checkoutCode = `const customer = await Effect.runPromise(
+  hyprpay.customers.create({ externalId: "user_123", name: "Empresa XPTO" }),
 );
 
 const checkout = await Effect.runPromise(
@@ -62,35 +37,33 @@ const checkout = await Effect.runPromise(
   }),
 );`;
 ---
-<DocsLayout
-  title="Quickstart"
-  description="Create the HyprPay runtime, define a catalog, connect Postgres, and start a hosted checkout without leaking gateway details into your app."
-  active="quickstart"
->
-  <section class="steps">
-    <article class="step">
-      <span class="step-number">1</span>
-      <h3>Install runtime packages</h3>
-      <pre><code>bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm</code></pre>
-    </article>
+<BaseLayout title="Quickstart" description="Install HyprPay, configure Postgres, define a catalog, and start checkout." active="/quickstart">
+  <Hero
+    eyebrow="Quickstart"
+    title="From empty app to checkout in four steps."
+    description="Keep gateway config at the edge and let HyprPay own billing records, catalog versions, and entitlements."
+  />
 
-    <article class="step">
-      <span class="step-number">2</span>
-      <h3>Create <code>hyprpay.ts</code></h3>
-      <p>Keep catalog, store, and gateway wiring in one server-only module.</p>
-      <pre><code>{configCode}</code></pre>
-    </article>
+  <Section>
+    <div class="grid gap-5 lg:grid-cols-2">
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Step 1</span>
+        <h2 class="mt-3 text-2xl font-bold text-white">Install packages</h2>
+        <pre><code>bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm</code></pre>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <span class="text-sm font-bold uppercase tracking-[0.18em] text-cyan-300">Step 2</span>
+        <h2 class="mt-3 text-2xl font-bold text-white">Push before deploy</h2>
+        <pre><code>bunx hyprpay push -y</code></pre>
+      </article>
+    </div>
+  </Section>
 
-    <article class="step">
-      <span class="step-number">3</span>
-      <h3>Push schema and catalog</h3>
-      <pre><code>bunx hyprpay push -y</code></pre>
-    </article>
+  <Section eyebrow="Config" title="Create a server-only HyprPay module.">
+    <pre><code>{configCode}</code></pre>
+  </Section>
 
-    <article class="step">
-      <span class="step-number">4</span>
-      <h3>Create customer and checkout</h3>
-      <pre><code>{usageCode}</code></pre>
-    </article>
-  </section>
-</DocsLayout>
+  <Section eyebrow="Checkout" title="Create a customer and redirect to payment.">
+    <pre><code>{checkoutCode}</code></pre>
+  </Section>
+</BaseLayout>

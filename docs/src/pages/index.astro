@@ -1,65 +1,61 @@
 ---
-import DocsLayout from "../layouts/docs-layout.astro";
+import Hero from "../components/hero.astro";
+import Section from "../components/section.astro";
+import BaseLayout from "../layouts/base-layout.astro";
 
-const installCode = `bun add @hyprpay/core @hyprpay/store-postgres @hyprpay/gateway-asaas effect drizzle-orm`;
-const catalogCode = `import { createHyprPay, feature, plan, product } from "@hyprpay/core";
+const catalogCode = `import { benefit, createHyprPay, feature, plan, product } from "@hyprpay/core";
 import { createAsaasProvider } from "@hyprpay/gateway-asaas";
 import { postgresStore } from "@hyprpay/store-postgres";
 
 const messages = feature.metered({ id: "messages", reset: "month" });
+const seats = benefit.seats({ id: "team-seats", quantity: 5 });
+
 const pro = plan({
   id: "pro",
   group: "base",
   price: { amountMinor: 1990, currency: "BRL", interval: "month" },
-  includes: [messages({ limit: 2_000 })],
+  includes: [messages({ limit: 2_000 }), seats],
 });
 
 export const hyprpay = createHyprPay({
   catalog: [product({ id: "app", name: "App", plans: [pro] })],
   store: postgresStore({ db }),
-  provider: createAsaasProvider({ apiKey: process.env.ASAAS_API_KEY ?? "" }),
+  provider: createAsaasProvider({ apiKey: env.ASAAS_API_KEY, server: "sandbox" }),
 });`;
 ---
-<DocsLayout
-  title="Billing without gateway lock-in"
-  description="HyprPay gives Brazilian SaaS products a typed catalog, local entitlements, Postgres as source of truth, and thin payment gateways for Asaas and Abacate Pay."
-  active="intro"
+<BaseLayout
+  title="HyprPay"
+  description="Billing gateway-agnostic para SaaS brasileiros com catálogo em código, entitlements locais e Postgres como fonte da verdade."
+  active="/"
 >
-  <div class="badge-line">
-    <span class="badge">Effect v4 runtime</span>
-    <span class="badge">Postgres-first</span>
-    <span class="badge">Gateway agnostic</span>
-    <span class="badge">Better Auth plugin</span>
-  </div>
+  <Hero
+    eyebrow="Effect billing for Brazil"
+    title="Billing DX sem lock-in de provider."
+    description="Defina catálogo, benefícios, limites de uso e checkout uma vez. Troque Asaas e Abacate Pay atrás do mesmo runtime tipado do HyprPay."
+    actions={[
+      { href: "/quickstart", label: "Integrar agora" },
+      { href: "/architecture", label: "Ver arquitetura", variant: "secondary" },
+    ]}
+  />
 
-  <div class="cta-row">
-    <a class="button" href="/quickstart">Start integrating</a>
-    <a class="button secondary" href="/architecture">See architecture</a>
-  </div>
+  <Section eyebrow="Direção" title="PayKit claro, Better Auth composável, AstroWind no site." description="HyprPay usa as melhores ideias de DX sem copiar código proprietário: factories pequenas, plugins explícitos, catálogo declarativo e adapters finos para gateways brasileiros.">
+    <div class="grid gap-5 md:grid-cols-3">
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <h3 class="text-xl font-bold text-white">Catálogo em código</h3>
+        <p class="mt-3 leading-7 text-slate-300">Produtos, planos, features, benefícios e preços ficam tipados na aplicação e sincronizados em versões imutáveis no Postgres.</p>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <h3 class="text-xl font-bold text-white">Capabilities locais</h3>
+        <p class="mt-3 leading-7 text-slate-300">Entitlements, meters, license keys, downloads, seats e portal sessions não viram cola de gateway.</p>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-black/20">
+        <h3 class="text-xl font-bold text-white">Adapters finos</h3>
+        <p class="mt-3 leading-7 text-slate-300">Gateways normalizam requests, responses e webhooks. Payload bruto para na boundary do adapter.</p>
+      </article>
+    </div>
+  </Section>
 
-  <section class="grid">
-    <article class="card">
-      <h3>Catalog in code</h3>
-      <p>Define products, plans, prices, features, and benefits once. The CLI syncs immutable catalog versions into Postgres before deploy.</p>
-    </article>
-    <article class="card">
-      <h3>Local capabilities</h3>
-      <p>Entitlements, usage meters, license keys, downloads, seats, and portal sessions live in HyprPay instead of the gateway.</p>
-    </article>
-    <article class="card">
-      <h3>Replaceable gateways</h3>
-      <p>Asaas and Abacate Pay only map checkout, subscription, refund, and webhook contracts. Your app keeps the same billing API.</p>
-    </article>
-  </section>
-
-  <h2>Install</h2>
-  <pre><code>{installCode}</code></pre>
-
-  <h2>Shape</h2>
-  <pre><code>{catalogCode}</code></pre>
-
-  <section class="callout">
-    <h3>Design direction</h3>
-    <p>HyprPay borrows the ergonomic ideas of PayKit and Better Auth—small factories, typed plugins, and deploy-time sync—without copying provider-specific architecture or tying users to a single gateway.</p>
-  </section>
-</DocsLayout>
+  <Section eyebrow="Runtime" title="Um módulo server-only, APIs pequenas.">
+    <pre><code>{catalogCode}</code></pre>
+  </Section>
+</BaseLayout>
