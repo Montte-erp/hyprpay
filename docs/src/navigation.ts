@@ -1,6 +1,6 @@
 export const site = {
   name: "HyprPay",
-  description: "Billing gateway-agnostic para produtos SaaS brasileiros.",
+  description: "Billing em TypeScript para produtos SaaS brasileiros.",
   url: "https://hyprpay.dev",
 };
 

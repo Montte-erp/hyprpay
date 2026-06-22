@@ -1,5 +1,4 @@
 ---
-import { Rocket } from "@lucide/astro";
 import Logo from "./logo.astro";
 import { Button } from "./starwind/button";
 import { navItems } from "../navigation";
@@ -27,8 +26,7 @@ const { active } = Astro.props;
       ))}
     </nav>
     <Button class="hidden sm:inline-flex" variant="outline" href="/quickstart">
-      <Rocket class="mr-2 h-4 w-4" aria-hidden="true" />
-      Integrar
+      Quickstart
     </Button>
   </div>
   <nav class="flex gap-2 overflow-x-auto px-4 pb-4 lg:hidden" aria-label="Navegação mobile">

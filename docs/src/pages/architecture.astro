@@ -6,44 +6,44 @@ import Section from "../components/section.astro";
 import BaseLayout from "../layouts/base-layout.astro";
 
 const layers = [
-  ["core/*", "APIs de domínio: customers, checkouts, subscriptions, webhooks, benefits, entitlements, meters, seats, portal sessions e license keys."],
-  ["stores/postgres", "Fonte durável da verdade com Drizzle Postgres e versões imutáveis de catálogo."],
-  ["gateways/*", "Adapters substituíveis para Asaas e Abacate Pay. Eles traduzem provider bruto para contratos do core."],
-  ["integrations/*", "Glue opcional para Better Auth e Alchemy v2 sem contaminar o runtime principal."],
-  ["docs/", "Astro docs com componentes Starwind, Tailwind v4, Sora e conteúdo original de integração."],
+  ["core/*", "Domínios server-side: customers, checkouts, subscriptions, webhooks, benefits, entitlements, meters, seats, portal e license keys."],
+  ["stores/postgres", "Fonte da verdade. Guarda customers, subscriptions, catálogo versionado, grants e usage."],
+  ["gateways/*", "Adapters substituíveis para Asaas e Abacate Pay. Provider bruto fica aqui."],
+  ["integrations/*", "Plugins opcionais para frameworks e ferramentas externas."],
+  ["docs/", "Guias de instalação e integração."],
 ];
 ---
-<BaseLayout title="Arquitetura" description="Comparação da arquitetura HyprPay com Better Auth, PayKit e Starwind." active="/architecture">
+<BaseLayout title="Arquitetura" description="Camadas do HyprPay e limites entre core, store, gateways e integrações." active="/architecture">
   <Hero
-    eyebrow="Architecture"
-    title="Core pequeno, módulos fundos, zero lock-in."
-    description="HyprPay mantém o catálogo estilo PayKit e o shape de plugin do Better Auth, mas empurra todo trabalho provider-specific para adapters finos."
+    eyebrow="Arquitetura"
+    title="Core pequeno. Estado local. Gateways na borda."
+    description="O app fala com HyprPay. HyprPay grava no Postgres e chama o provider apenas quando precisa cobrar, assinar ou normalizar webhook."
   />
 
-  <Section eyebrow="Comparação" title="O que fica de cada referência.">
+  <Section eyebrow="Camadas" title="Separação que evita acoplamento.">
     <Features
       items={[
         {
           icon: "blocks",
-          title: "Better Auth",
-          description: "Factory-first, plugins server/client separados, mesmo id nos dois lados e endpoints namespaced.",
+          title: "Factory única",
+          description: "createHyprPay recebe store, provider e catálogo. O restante são sub-APIs pequenas.",
         },
         {
           icon: "book-open-check",
-          title: "PayKit",
-          description: "Catálogo em código, sync no deploy, status check em CI e entitlement como primitiva de produto.",
+          title: "Catálogo versionado",
+          description: "push grava novas versões sem alterar planos antigos já usados em produção.",
         },
         {
-          icon: "wind",
-          title: "Starwind",
-          description: "Docs estáticas com componentes de Button/Card, Tailwind v4, tokens CSS e visual SaaS sem JavaScript desnecessário.",
+          icon: "plug-zap",
+          title: "Contrato de gateway",
+          description: "Gateways implementam capabilities. O core decide o fallback quando uma capability não existe.",
         },
       ]}
     />
   </Section>
 
-  <Section eyebrow="Boundaries" title="A estrutura do repo espelha o runtime.">
-    <Card class="overflow-hidden shadow-xl">
+  <Section eyebrow="Boundaries" title="Estrutura do repo.">
+    <Card class="overflow-hidden shadow-sm">
       <CardContent class="divide-y divide-border p-0">
         {layers.map(([name, description]) => (
           <div class="grid gap-3 p-5 md:grid-cols-[220px_1fr]">
@@ -55,23 +55,23 @@ const layers = [
     </Card>
   </Section>
 
-  <Section eyebrow="Invariantes" title="O que não pode quebrar.">
+  <Section eyebrow="Invariantes" title="Regras do runtime.">
     <Features
       items={[
         {
           icon: "shield-check",
-          title: "Sem provider bruto no sucesso",
-          description: "Gateways retornam refs normalizadas. Payload original só aparece em BillingEvent.payload.",
+          title: "Sem payload bruto",
+          description: "Responses públicas usam schemas normalizados. Payload de webhook fica em BillingEvent.payload.",
         },
         {
           icon: "file-check",
-          title: "Capability ausente falha tipada",
-          description: "Sem no-op silencioso. Operação não suportada retorna CapabilityUnsupported.",
+          title: "Falhas tipadas",
+          description: "Capability ausente e input inválido falham no error channel do Effect.",
         },
         {
           icon: "layers",
-          title: "Framework fora do core",
-          description: "Better Auth e Alchemy são packages opcionais; @hyprpay/core não depende deles.",
+          title: "Core sem framework",
+          description: "Integrações ficam fora do core; o runtime continua server-only e sem framework.",
         },
       ]}
     />

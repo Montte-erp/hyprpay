@@ -29,38 +29,38 @@ if (result.data?.checkout.checkoutUrl) {
 ---
 <BaseLayout title="Better Auth" description="Conecte HyprPay ao Better Auth com plugin server e client." active="/better-auth">
   <Hero
-    eyebrow="Integration"
-    title="Usuários Better Auth, billing state HyprPay."
-    description="O plugin sincroniza o usuário autenticado como customer, cria checkout de upgrade, lista subscriptions locais e cria portal sessions."
+    eyebrow="Integração"
+    title="Use o usuário autenticado como customer."
+    description="O plugin cria checkout de upgrade, lista subscriptions locais e abre portal sessions sem expor gateway no client."
   />
 
   <Section eyebrow="Server" title="Adicione o plugin no auth server.">
     <pre><code>{serverCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Client" title="Expose ações de billing no auth client.">
+  <Section eyebrow="Client" title="Adicione as ações de billing no client.">
     <pre><code>{clientCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Upgrade" title="Chame checkout sem saber qual gateway está ligado.">
+  <Section eyebrow="Upgrade" title="Crie o checkout pelo client tipado.">
     <pre><code>{upgradeCode}</code></pre>
     <div class="mt-8">
       <Features
         items={[
           {
             icon: "user-check",
-            title: "Customer sync",
+            title: "Customer",
             description: "O ID do usuário Better Auth vira Customer.externalId.",
           },
           {
             icon: "repeat",
-            title: "Subscriptions locais",
-            description: "A listagem lê o banco HyprPay, não o gateway.",
+            title: "Subscriptions",
+            description: "A listagem lê o banco local do HyprPay.",
           },
           {
             icon: "door-open",
             title: "Portal",
-            description: "A sessão do portal mantém a app desacoplada de provider.",
+            description: "A sessão de portal é criada pelo core, não pelo client.",
           },
         ]}
       />

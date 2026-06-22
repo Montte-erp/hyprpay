@@ -269,10 +269,7 @@
 
   body {
     min-height: 100vh;
-    background:
-      radial-gradient(circle at top left, color-mix(in oklch, var(--primary) 20%, transparent), transparent 34rem),
-      radial-gradient(circle at top right, color-mix(in oklch, var(--accent) 16%, transparent), transparent 32rem),
-      var(--background);
+    background: var(--background);
     color: var(--foreground);
     font-family: var(--font-body);
     letter-spacing: var(--tracking-normal);
@@ -283,17 +280,6 @@
     @apply cursor-pointer;
   }
 
-  body::before {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    content: "";
-    background-image:
-      linear-gradient(color-mix(in oklch, var(--border) 32%, transparent) 1px, transparent 1px),
-      linear-gradient(90deg, color-mix(in oklch, var(--border) 32%, transparent) 1px, transparent 1px);
-    background-size: 48px 48px;
-    mask-image: linear-gradient(to bottom, black, transparent 78%);
-  }
 
   pre {
     @apply overflow-x-auto rounded-xl border border-border bg-popover p-5 font-mono text-sm leading-7 text-popover-foreground shadow-lg;

@@ -18,11 +18,11 @@ const provider = createAbacatePayProvider({
   webhookSecret: process.env.ABACATE_PAY_WEBHOOK_SECRET,
 });`;
 ---
-<BaseLayout title="Gateways" description="Use Asaas ou Abacate Pay atrás do mesmo contrato de provider HyprPay." active="/gateways">
+<BaseLayout title="Gateways" description="Use Asaas ou Abacate Pay atrás do mesmo contrato HyprPay." active="/gateways">
   <Hero
     eyebrow="Gateways"
-    title="Adapters de provider ficam chatos."
-    description="Gateways traduzem requests e normalizam webhooks. Benefits, entitlements e catálogo continuam capabilities locais do HyprPay."
+    title="Troque gateway sem trocar billing."
+    description="Adapters traduzem requests, responses e webhooks. Catálogo, entitlements e estado ficam no HyprPay."
   />
 
   <Section>
@@ -32,32 +32,32 @@ const provider = createAbacatePayProvider({
         {
           icon: "credit-card",
           title: "Asaas",
-          description: "PIX, boleto, cartão, hosted checkout e normalização de webhook para billing brasileiro.",
+          description: "PIX, boleto, cartão, checkout hospedado e webhooks normalizados.",
           code: asaasCode,
         },
         {
           icon: "plug-zap",
           title: "Abacate Pay",
-          description: "Segundo gateway para provar que o contrato do core é provider-agnostic.",
+          description: "Segundo gateway usando o mesmo contrato de checkout e webhook.",
           code: abacateCode,
         },
       ]}
     />
   </Section>
 
-  <Section eyebrow="Adapter boundary" title="O que gateway nunca deve vazar.">
+  <Section eyebrow="Boundary" title="O que não passa do adapter.">
     <Features
       columns={2}
       items={[
         {
           icon: "shield-check",
-          title: "Resposta pública normalizada",
-          description: "Response bruto de provider não cruza sucesso da API pública.",
+          title: "Response normalizada",
+          description: "API pública retorna schemas do HyprPay, não payload do provider.",
         },
         {
           icon: "file-check",
-          title: "Falha tipada",
-          description: "Capability ausente falha com erro Effect tipado.",
+          title: "Erro tipado",
+          description: "Capability ausente falha no error channel do Effect.",
         },
         {
           icon: "webhook",

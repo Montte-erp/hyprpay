@@ -26,42 +26,42 @@ export const hyprpay = createHyprPay({
 ---
 <BaseLayout
   title="HyprPay"
-  description="Billing gateway-agnostic para SaaS brasileiros com catálogo em código, entitlements locais e Postgres como fonte da verdade."
+  description="Billing em TypeScript para apps brasileiros com catálogo em código, entitlements locais e Postgres como fonte da verdade."
   active="/"
 >
   <Hero
-    eyebrow="Effect billing for Brazil"
-    title="Billing DX sem lock-in de provider."
-    description="Defina catálogo, benefícios, limites de uso e checkout uma vez. Troque Asaas e Abacate Pay atrás do mesmo runtime tipado do HyprPay."
+    eyebrow="Billing em TypeScript"
+    title="Billing sem prender seu app ao gateway."
+    description="Defina produtos, planos e limites uma vez. Use Asaas ou Abacate Pay atrás do mesmo runtime."
     actions={[
       { href: "/quickstart", label: "Integrar agora" },
       { href: "/architecture", label: "Ver arquitetura", variant: "secondary" },
     ]}
   />
 
-  <Section eyebrow="Direção" title="PayKit claro, Better Auth composável, Starwind no site." description="HyprPay usa as melhores ideias de DX sem copiar código proprietário: factories pequenas, plugins explícitos, catálogo declarativo, adapters finos e UI Starwind em Astro.">
+  <Section eyebrow="O que é" title="Um framework de billing embutido no seu app." description="HyprPay guarda o estado no seu Postgres, chama gateways só nas bordas e expõe APIs pequenas para checkout, assinaturas e entitlements.">
     <Features
       items={[
         {
           icon: "book-open-check",
           title: "Catálogo em código",
-          description: "Produtos, planos, features, benefícios e preços ficam tipados na aplicação e sincronizados em versões imutáveis no Postgres.",
+          description: "Produtos, planos, preços e limites ficam versionados junto da aplicação.",
         },
         {
           icon: "gauge",
-          title: "Capabilities locais",
-          description: "Entitlements, meters, license keys, downloads, seats e portal sessions não viram cola de gateway.",
+          title: "Entitlements locais",
+          description: "Cheque acesso, registre uso e aplique benefícios sem consultar o gateway.",
         },
         {
           icon: "plug-zap",
-          title: "Adapters finos",
-          description: "Gateways normalizam requests, responses e webhooks. Payload bruto para na boundary do adapter.",
+          title: "Gateways na borda",
+          description: "Asaas e Abacate Pay implementam o mesmo contrato normalizado do core.",
         },
       ]}
     />
   </Section>
 
-  <Section eyebrow="Runtime" title="Um módulo server-only, APIs pequenas.">
+  <Section eyebrow="Exemplo" title="Crie a instância server-side.">
     <pre><code>{catalogCode}</code></pre>
   </Section>
 </BaseLayout>

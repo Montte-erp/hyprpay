@@ -19,11 +19,11 @@ export default defineHyprPayConfig({
   catalog,
 });`;
 ---
-<BaseLayout title="CLI" description="Comandos HyprPay para setup, sync de catálogo, status de deploy e telemetria." active="/cli">
+<BaseLayout title="CLI" description="Comandos HyprPay para setup, migrations, sync de catálogo e status." active="/cli">
   <Hero
     eyebrow="CLI"
-    title="Segurança de deploy para mudanças de billing."
-    description="A CLI é pequena de propósito: inicializa config, sincroniza versões de catálogo no Postgres e valida se produção está pronta."
+    title="Use a CLI como parte do deploy."
+    description="init cria a config. push prepara banco e catálogo. status valida ambiente sem alterar nada."
   />
 
   <Section>
@@ -32,31 +32,36 @@ export default defineHyprPayConfig({
         {
           icon: "terminal",
           title: "init",
-          description: "Cria uma config inicial e mostra o shape esperado de Postgres + catálogo.",
+          description: "Cria a config inicial e mostra o shape esperado de Postgres + catálogo.",
           code: "bunx hyprpay init",
         },
         {
           icon: "upload-cloud",
           title: "push",
-          description: "Aplica setup idempotente do store e grava versões imutáveis do catálogo.",
+          description: "Aplica setup do store e grava versões novas do catálogo.",
           code: "bunx hyprpay push -y",
         },
         {
           icon: "activity",
           title: "status",
-          description: "Falha a CI quando config, banco ou catálogo ainda não estão prontos.",
+          description: "Checa config, conexão com banco, migrations e sync do catálogo.",
           code: "bunx hyprpay status --throw",
         },
       ]}
     />
   </Section>
 
-  <Section eyebrow="Config" title="Aponte a CLI para o mesmo banco e catálogo do app.">
+  <Section eyebrow="Config" title="Aponte para o mesmo banco e catálogo do app.">
     <pre><code>{configCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Telemetry" title="Eventos PostHog via evlog, sempre opt-in.">
+  <Section eyebrow="Produção" title="Rode push antes do build ou start.">
+    <pre><code>hyprpay push -y && next build</code></pre>
+    <p class="leading-7 text-muted-foreground">É o mesmo lugar onde você rodaria migrations. A versão nova do catálogo fica pronta antes do código novo subir.</p>
+  </Section>
+
+  <Section eyebrow="Telemetria" title="PostHog via evlog, opt-in.">
     <pre><code>HYPERPAY_TELEMETRY=1 POSTHOG_API_KEY=phc_... bunx hyprpay status</code></pre>
-    <p class="leading-7 text-muted-foreground">Opt-out sempre vence com <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code> ou <code>DO_NOT_TRACK=1</code>.</p>
+    <p class="leading-7 text-muted-foreground">Desative com <code>HYPERPAY_TELEMETRY_DISABLED=1</code>, <code>HYPRPAY_TELEMETRY_DISABLED=1</code> ou <code>DO_NOT_TRACK=1</code>.</p>
   </Section>
 </BaseLayout>

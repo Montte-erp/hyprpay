@@ -15,7 +15,7 @@ const checkCode = `const access = await Effect.runPromise(
 if (!access.allowed) {
   return Response.json({ error: "Limite de uso atingido." }, { status: 403 });
 }`;
-const reportCode = `const response = await generateMessage(input);
+const reportCode = `const response = await renderExport(input);
 
 await Effect.runPromise(
   hyprpay.entitlements.report({
@@ -28,11 +28,11 @@ await Effect.runPromise(
 
 return Response.json(response);`;
 ---
-<BaseLayout title="Entitlements" description="Controle comportamento do produto com feature grants locais e saldos metered." active="/entitlements">
+<BaseLayout title="Entitlements" description="Controle acesso do produto com grants locais e saldos medidos." active="/entitlements">
   <Hero
     eyebrow="Entitlements"
-    title="Cheque antes. Reporte só depois do sucesso."
-    description="HyprPay resolve acesso por planos pagos ativos primeiro e cai para grants default do catálogo quando não há assinatura ativa."
+    title="Cheque antes. Registre depois."
+    description="HyprPay resolve acesso com subscriptions ativas e grants do catálogo. Uso só é consumido quando a ação termina com sucesso."
   />
 
   <Section>
@@ -41,27 +41,27 @@ return Response.json(response);`;
         {
           icon: "toggle-right",
           title: "Boolean",
-          description: "Use para premium access, suporte prioritário ou feature gates.",
+          description: "Use para acesso premium, suporte prioritário ou feature gates.",
         },
         {
           icon: "gauge",
           title: "Metered",
-          description: "Use para mensagens, exports, créditos, chamadas de API ou gerações de IA.",
+          description: "Use para mensagens, exports, créditos ou chamadas de API.",
         },
         {
           icon: "fingerprint",
-          title: "Idempotente",
+          title: "Idempotência",
           description: "Reporte uso com idempotency key para retries não consumirem saldo duas vezes.",
         },
       ]}
     />
   </Section>
 
-  <Section eyebrow="Antes do trabalho" title="Cheque acesso antes de consumir recurso.">
+  <Section eyebrow="Antes" title="Cheque acesso antes de consumir recurso.">
     <pre><code>{checkCode}</code></pre>
   </Section>
 
-  <Section eyebrow="Depois do sucesso" title="Reporte uso somente quando a ação der certo.">
+  <Section eyebrow="Depois" title="Reporte uso só depois do sucesso.">
     <pre><code>{reportCode}</code></pre>
   </Section>
 </BaseLayout>

@@ -19,7 +19,6 @@ import {
   Repeat2,
   ScanLine,
   ShieldCheck,
-  Sparkles,
   Terminal,
   ToggleRight,
   CloudUpload,
@@ -100,7 +99,7 @@ const iconFor = (icon: string) => {
     case "workflow":
       return Workflow;
     default:
-      return Sparkles;
+      return Blocks;
   }
 };
 ---
@@ -109,10 +108,10 @@ const iconFor = (icon: string) => {
     const Icon = iconFor(item.icon);
 
     return (
-      <Card class="group h-full shadow-xl transition duration-300 hover:-translate-y-1 hover:border-primary/50 hover:bg-secondary/40">
+      <Card class="h-full shadow-sm transition duration-200 hover:border-primary/50">
         <CardHeader>
-          <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-secondary text-secondary-foreground ring-1 ring-border transition group-hover:bg-primary group-hover:text-primary-foreground">
-            <Icon class="h-6 w-6" aria-hidden="true" />
+          <div class="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-lg bg-secondary text-secondary-foreground ring-1 ring-border">
+            <Icon class="h-5 w-5" aria-hidden="true" />
           </div>
           <CardTitle>{item.title}</CardTitle>
           <CardDescription>{item.description}</CardDescription>
